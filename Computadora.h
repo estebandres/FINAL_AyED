@@ -8,14 +8,14 @@ class Computadora
 {
 	private:
 		Router* router;//Puntero al router donde está conectada la máquina.
-		int* ip;
+		vector<int> ip;
 		Lista<Pagina> paginas_recibidas;
-		int cant_pag_enviadas;
 	public:		
 		Computadora(Router*, int);
 		~Computadora();
-		void enviar_pagina();
+		void enviar_pagina(Pagina);
 		void recibir_pagina(Pagina);
+		void cant_pag_recibidas();
 };
 
 #endif // COMPUTADORA_H

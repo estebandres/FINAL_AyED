@@ -1,16 +1,10 @@
 #include "Pagina.h"
 
-Pagina::Pagina(int id, int tamanio, int* ip_comp_origen, int* ip_comp_destino){
+Pagina::Pagina(int id, int tamanio, vector<int> ip_comp_origen, vector<int> ip_comp_destino){
 	this->id = id;
 	this->tamanio = tamanio;
-	int [2] nvo_vector1;
-	int [2] nvo_vector2;
-	for(int i=0; i<2; i++){
-		nvo_vector1[i] = ip_comp_origen[i];
-		nvo_vector2[i] = ip_comp_destino[i];
-	}
-	this->ip_comp_origen = nvo_vector1;
-	this->ip_comp_destino = nvo_vector2;
+	this->ip_comp_origen = ip_comp_origen;
+	this->ip_comp_destino = ip_comp_destino;
 }
 
 int Pagina::obtener_id(){
@@ -21,11 +15,11 @@ int Pagina::obtener_tamanio(){
 return this->tamanio;
 }
 
-int * Pagina::obtener_ip_comp_origen(){
+vector<int> Pagina::obtener_ip_comp_origen(){
 return this->ip_comp_origen;
 }
 
-int * Pagina::obtener_ip_comp_destino(){
+vector<int>  Pagina::obtener_ip_comp_destino(){
 return this->ip_comp_destino;
 }
 

@@ -1,6 +1,18 @@
+#include <iostream>
 #include "Paquete.h"
-		
-Paquete::Paquete(int* ip_comp_origen, int* ip_comp_destino, int id_pagina, int tamanio_pagina, int nro_orden){
+#include <stdlib>
+#include <vector>
+
+using namespace std;
+
+Paquete::Paquete(){
+	this->ip_comp_origen=vector<int>(-1,-1);
+	this->ip_comp_destino=vector<int>(-1,-1);
+	this->id_pagina=-1;
+	this->tamanio_pagina=-1;
+	this->nro_orden=-1;
+}
+Paquete::Paquete(vector<int> ip_comp_origen, vector<int> ip_comp_destino, int id_pagina, int tamanio_pagina, int nro_orden){
 	this->ip_comp_origen=ip_comp_origen;
 	this->ip_comp_destino=ip_comp_destino;
 	this->id_pagina=id_pagina;
@@ -8,15 +20,15 @@ Paquete::Paquete(int* ip_comp_origen, int* ip_comp_destino, int id_pagina, int t
 	this->nro_orden=nro_orden;
 }
 
-int * Paquete::obtener_ip_comp_origen(){
+vector<int> Paquete::obtener_ip_comp_origen(){
 	return this->ip_comp_origen;
 }
 
-int * Paquete::obtener_ip_comp_destino(){
+vector<int> Paquete::obtener_ip_comp_destino(){
 	return this->ip_comp_destino;
 }
 
-int Paquete::obtener_id_pagina();{
+int Paquete::obtener_id_pagina(){
 	return this->id_pagina;
 }
 
@@ -26,4 +38,16 @@ int Paquete::obtener_nro_orden(){
 
 int Paquete::obtener_tamanio_pagina(){
 	return this->tamanio_pagina;
+}
+
+void Paquete::imprimir(){
+	cout<<"PAQUETE:"<<this->nro_orden<<" --> PÁGINA: "<<this->id_pagina<<endl;
+}
+
+void Paquete::cambiar_orden(int nvo_nro_orden){
+	this->nro_orden=nvo_nro_orden;
+}
+
+Paquete::~Paquete(){
+	
 }

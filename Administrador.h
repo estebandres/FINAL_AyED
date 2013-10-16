@@ -12,6 +12,8 @@ class Administrador
 		Lista<Computadora*> computadoras;
 		Lista<Arco> arcos; 
 		Lista<Conexion> conexiones;
+		int cant_comp_por_router;
+		int cant_routers;
 		
 	public:
 		Administrador();

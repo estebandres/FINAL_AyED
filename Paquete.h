@@ -1,8 +1,9 @@
 #ifndef PAQUETE_H
 #define PAQUETE_H
-
 #include <vector>
+
 using namespace std;
+//definir el ancho del paquete
 
 class Paquete
 {
@@ -11,7 +12,7 @@ class Paquete
 		vector<int> ip_comp_destino;
 		int id_pagina;
 		int tamanio_pagina;
-		int nro_orden;
+		int nro_orden; //orden del paquete = tamanio/ancho_paquete
 		
 	public:		
 		Paquete();

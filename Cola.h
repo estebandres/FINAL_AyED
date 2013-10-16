@@ -6,13 +6,15 @@
 
 using namespace std;
 
+//Cola de Listas
+
 /*!Begin Snippet:fullNodo*/
 /*!Begin Snippet:private*/
 template <typename T>
 class Cola : public Lista<T> {
 private:
-	int duenio;
-	int tamanio_max;
+	int duenio; // ip_equipo asociado
+	int tamanio_max; // 
 public:
 	Cola();
 	Cola(int);
@@ -25,8 +27,10 @@ public:
 	int obtener_tamanio_max();
 	void fijar_tamanio_max(int);
 	bool cola_llena();
+	void imprimir();
 
 };
+
 
 template <typename T>
 Cola<T>::Cola(){
@@ -54,13 +58,10 @@ Cola<T>::~Cola(){}
 
 template <typename T>
 void Cola<T>::encolar(T elemento){
-	if(tamanio_max>0){//si es una cola limitada en tamanio.
-		assert(this->cola_llena() && "Se intenta agregar elementos a una cola llena");
-		Lista<T>::insertar_al_final(elemento);
-	}
-	else{
-		Lista<T>::insertar_al_final(elemento);
-	}
+	
+		assert(!this->cola_llena() && "Se intenta agregar elementos a una cola llena"); // si la cola esta llena, mando el mensaje
+		this->insertar_al_final(elemento);
+	
 }
 
 template <typename T>
@@ -92,7 +93,13 @@ bool Cola<T>::cola_llena(){
 
 template <typename T>
 void Cola<T>::fijar_tamanio_max(int tam_max){
-	this->tamanio_max == tam_max;
+	this->tamanio_max = tam_max;
 }
+
+template <typename T>
+void Cola<T>::imprimir(void){
+	Lista<T>::imprimir();
+}
+
 
 #endif

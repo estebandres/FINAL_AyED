@@ -11,11 +11,48 @@ Administrador::~Administrador(){
 void Administrador::simular_cant_pasos(int){
 }
 
-void Administrador::crear_paginas(){
-//cada cierta cantidad de pasos de simulacion se generaran paginas aleatorioas de compuatadoras aleatorias.
+void Administrador::crear_pagina(){
+//Cada cierta cantidad de pasos de simulacion (5) se generaran paginas aleatorioas de compuatadoras aleatorias.
+//
+	srand(time(0));
+	int i = rand() % (cant_comp_por_router+1);
+	int j = rand() % (cant_routers+1);
+	int arreglo[2]={i,j};
+	vector<int> ip_comp_origen(arreglo,arreglo+sizeof(arreglo)/sizeof(arreglo[0]));
+	srand(time(0));
+	int k = rand() % (cant_comp_por_router+1);
+	int l = rand() % (cant_routers+1);
+	int arreglo[2]={k,l};
+	vector<int> ip_comp_destino(arreglo,arreglo+sizeof(arreglo)/sizeof(arreglo[0]));
+	total_pag++;
+	Pagina nva_pag(total_pag, rand()%(tam_max_pag+1-tam_min_pag)+tam_min_pag, ip_comp_origen, ip_comp_destino);
+	*computadoras.elemento_pos(cant_comp_por_router * cant_routers-1).enviar_pagina(nva_pag);//Ojo revisar si se envia desde la máquina correcta.	
 }
 
 void Administrador::simular_un_paso(){//recorrer la lista de router y ejecutar enviar y despues en otro ciclo recibir
+	
+	if(cant_pasos == 0){
+		int bandera=cant_comp_por_routers*cant_routers; 
+		while(bandera==0){
+			this->crear_pagina();
+			bandera--;
+		}
+	}
+	if((cant_pasos % 5) == 0){
+		crear_pagina();
+	}
+	if((cant_pasos % 30) == 0){
+		this->Floid();
+	}
+
+	for(int i=0;i<routers.tamanio();i++){
+		routers.elemento_pos(i).enviar_paquetes();
+	}
+	for(int i=0;i<routers.tamanio();i++){
+		routers.elemento_pos(i).recibir_paquetes();
+	}
+	
+
 }
 
 void Administrador::Floid(){
@@ -78,6 +115,7 @@ void Administrador::leer_archivo(string nombre_archivo){
 		}
 	}
 }
+
 void Administrador::crear_conexiones(){
 	for(int i=0; i<arcos.tamanio(); i++){
 		Conexion nva_conexion(arcos.elemento_pos(i).nodo_i(), arcos.elemento_pos(i).nodo_j(), arcos.elemento_pos(i).peso());

@@ -1,15 +1,20 @@
 /*!Begin Snippet:filebegin*/
 #ifndef _Lista_H_
 #define _Lista_H_
+#include <assert.h>
 
-using namespace std;
+//FALLA LA COMPILACION
+
 
 /*!Begin Snippet:fullNodo*/
 /*!Begin Snippet:private*/
 template <typename T>
+
+//implementacion CLASE LISTA
 class Lista {
 
 private:
+	//implementacion CLASE NODO, cuya clase amiga es LISTA, y puede acceder a elemento y siguiente.
     class Nodo {
         friend class Lista<T>;
 
@@ -39,13 +44,13 @@ public:
 
     // Returns a reference to first element
     T& primer_elemento(void) {
-        assert (inicio != NULL && "Lista vacia");
-        return inicio->elemento;
+        assert (inicio != NULL && "Lista vacia"); //abortara la ejecucion dle programa mientras: 1) inicio es un puntero a nulo y 2) mensaje de lista vacia
+        return inicio->elemento; //&& es como una AND, ambas condiciones a la vez
     }
 
     // Returns a reference to last element
     T& ultimo_elemento(void) {
-        assert (final != NULL);
+        assert (final != NULL); //aborta si final es un puntero nulo
         return final->elemento;
     }
 
@@ -228,7 +233,7 @@ void Lista<T>::imprimir(void) {
     cout << "-----------------------------------------------------"<<endl;
 }
 /*!End Snippet:printlist*/
-template <typename T>
+template<typename T>
 void Lista<T>::agregar(T elemento){
 	this->insertar_al_final(elemento);
 }

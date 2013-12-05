@@ -26,7 +26,7 @@ Conexion::Conexion(){
 
 Conexion::Conexion(int terminal_i, int terminal_j, int ancho){
 	int bornes[]={terminal_i,terminal_j};
-	this->routers=set<int>(bornes,bornes+2);
+	this->terminales=set<int>(bornes,bornes+2);
 	this->ancho_banda=ancho;
 	this->canal.fijar_tamanio_max(this->ancho_banda);
 }

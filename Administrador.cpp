@@ -1,6 +1,12 @@
 #include "Administrador.h"
 #include <fstream>
 #include <sstream>
+#include <iostream>
+#include <string>
+#include <string.h>
+#include <set>
+
+#define INF 9999
 
 Administrador::Administrador(){
 }
@@ -8,7 +14,10 @@ Administrador::Administrador(){
 Administrador::~Administrador(){
 }
 
-void Administrador::simular_cant_pasos(int){
+void Administrador::simular_cant_pasos(int cant_pasos){
+		for(int i=0; i<cant_pasos; i++){
+			this->simular_un_paso();
+		}
 }
 
 void Administrador::crear_pagina(){
@@ -42,7 +51,7 @@ void Administrador::simular_un_paso(){//recorrer la lista de router y ejecutar e
 		crear_pagina();
 	}
 	if((cant_pasos % 30) == 0){
-		this->Floid();
+		this->recalcular_tablas();
 	}
 
 	for(int i=0;i<routers.tamanio();i++){
@@ -55,7 +64,61 @@ void Administrador::simular_un_paso(){//recorrer la lista de router y ejecutar e
 
 }
 
-void Administrador::Floid(){
+Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
+	Lista<int> S;
+	Lista<int> Q;
+	Lista<Etiqueta> etiquetas;
+//------------INICIALIZACIÓN-------------------------------------
+	for(int i=0; i<cant_routers;i++){
+		if(i==nodo_inicio){
+			etiquetas.agregar(new Etiqueta(i,-1,0));
+		}
+		else{
+			etiquetas.agregar(new Etiqueta(i,-1,INF));
+		}
+		Q.agregar(i);
+	}
+//------------CICLO DE PROCESAMIENTO-------------------------------------
+	while(!Q.es_vacia()){
+		int nodo_prox;
+		int peso_tray_menor=INF;
+		int peso_tray_actual;
+		int i;
+		for(i=0; i<Q.tamanio(); i++){
+			peso_tray_actual=etiquetas.elemento_pos(Q.elemento_pos(i)).peso_trayecto();
+			if(peso_tray_actual<peso_tray_menor){
+				peso_tray_menor=peso_tray_actual;
+				nodo_prox=Q.elemento_pos(i);
+			}
+		}
+		Q.quitar_nodo_pos(i);//Con esta acción corta el ciclo while
+		S.agregar(nodo_prox);
+		
+		Arco arco_actual;
+		int peso_tray_nvo;
+		Etiqueta etiqueta_vieja;
+		for(int k=0;k<arcos.tamanio();k++){//para cada uno de los arcos del grafo.
+			arco_actual=conexiones.elemento_pos(k);
+			peso_tray_nvo=etiquetas.elemento_pos(nodo_prox).peso_trayecto()+arco_actual.peso();
+			etiqueta_vieja = etiquetas.elemento_pos(arco_actual.destino())
+			if(arco_actual.origen()==nodo_prox){//Si el arco tiene como orígen el nodo que estamos analizando.
+				if(!S.contiene(arco_actual.destino())){//Si el destino de ese arco está dentro de los nodos calculados.
+					if(etiqueta_vieja.peso_trayecto()>peso_tray_nvo){//Si el peso del la etiqueta vieja es mayor que el peso del trayecto calculado.
+						etiqueta_vieja.mod_peso_trayecto(peso_tray_nvo);
+					}
+					if(etiqueta_vieja.consecutivo()==-1){//Si no se ha asignado el consecutivo de la etiqueta
+						etiqueta_vieja.mod_consecutivo(etiquetas.elemento_pos(nodo_prox).consecutivo());//Se le asigna el consecutivo de su predecesor.
+					}
+				}
+			}
+		}
+	}
+}
+
+void Administrador::recalcular_tablas(){
+	for(int i=0; i<cant_routers; i++){
+		routers.obtener_pos(i).actualizar_tabla(Dijkstra(i));
+	}
 }
 
 void Administrador::leer_archivo(string nombre_archivo){
@@ -128,4 +191,53 @@ void Administrador::crear_conexiones(){
 			conexiones.agregar(nva_conexion);
 		}
 	}
+}
+
+void Administrador::crear_archivo_dot(){
+	FILE * f = popen( "date +\"%m-%d_%H-%M-%S\"", "r" );
+    if ( f == 0 ) {
+        fprintf( stderr, "No se pudo ejecutar \"date\".\n" );
+        return 1;
+    }
+    const int BUFSIZE = 1000;
+    char buf[ BUFSIZE ];
+    fgets( buf, BUFSIZE,  f );
+    cout<<buf<<endl;
+    pclose( f );
+    /*std::string linea(buf);
+    linea[linea.size()-1]='\0';
+    std::stringstream flujo_cadenas;
+	flujo_cadenas << "grafo_" << linea << ".dot";
+	std::string cadena_concat = flujo_cadenas.str();
+	cout<<cadena_concat<<endl;
+	*/
+	buf[strlen(buf)-1]='\0';
+	char nombre_archivo[100];
+	strcpy(nombre_archivo,"grafo_");
+	strcat(nombre_archivo,buf);
+	strcat(nombre_archivo,".dot");
+	cout<<nombre_archivo<<endl;
+	ofstream flujo_salida;
+	
+	
+	flujo_salida.open(nombre_archivo);
+	flujo_salida<<"graph G \{"<<endl;
+	flujo_salida<<"graph [splines = ortho];"<<endl;
+	for(int i=0; i<cant_routers;i++){
+		for(int j=0; j<cant_comp_por_router;j++){
+		flujo_salida<<i<<" -- m"<<i<<j<<";"<<endl;
+		flujo_salida<<"m"<<i<<j<<" [label=\"\",shape=circle,height=0.12,width=0.12,fontsize=1,color=red,style=filled];"<<endl;
+		}
+		flujo_salida<<i<<" [label="<<"\"R"<<i<<"\""<<",shape=doublecircle,fontsize=10];"<<endl;
+	}
+	for(int k=0;k<conexiones.tamanio();k++){
+		set<int>::iterator it_1 = conexiones.elemento_pos(k).terminales().begin();
+		set<int>::iterator it_2 = it_1++;
+		flujo_salida<<*it_1<<" --> "<<*it_2<<" [color=blue,penwidth=3.0]"<<endl;
+	}
+	flujo_salida<<"}"<<endl;
+}
+
+void Administrador::mostrar_grafo(){
+
 }

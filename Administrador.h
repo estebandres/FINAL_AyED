@@ -19,9 +19,9 @@ class Administrador
 		Administrador();
 		void simular_cant_paso(int);
 		void simular_un_paso();
-		void Floid();
+		Lista<Etiqueta> Dijkstra(int);
 		void leer_archivo(string);
-		crear_conexiones()
+		void crear_conexiones()
 };
 
 #endif // Paquete_H

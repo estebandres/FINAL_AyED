@@ -345,5 +345,19 @@ void Lista<T>::intercambiar_pos_nodos(int pos_1, int pos_2){
 		}
 	}
 }
+
+bool Lista<T>::contiene(T elemento){
+	bool contenidp = false ;
+	Nodo* ptr_nodo_actual = inicio;
+
+    while (ptr_nodo_actual != NULL) {
+		if(ptr_nodo_actual->elemento == elemento){
+			contenido=true;
+			return contenido;
+		}
+		ptr_nodo_actual = ptr_nodo_actual->siguiente;
+	}
+	return contenido;
+}
 /*!End Snippet:filebegin*/
 #endif

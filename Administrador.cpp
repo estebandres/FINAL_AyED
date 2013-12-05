@@ -193,7 +193,8 @@ void Administrador::crear_conexiones(){
 	}
 }
 
-void Administrador::crear_archivo_dot(){
+void Administrador::dibujar_grafo(){
+	
 	FILE * f = popen( "date +\"%m-%d_%H-%M-%S\"", "r" );
     if ( f == 0 ) {
         fprintf( stderr, "No se pudo ejecutar \"date\".\n" );
@@ -236,8 +237,50 @@ void Administrador::crear_archivo_dot(){
 		flujo_salida<<*it_1<<" --> "<<*it_2<<" [color=blue,penwidth=3.0]"<<endl;
 	}
 	flujo_salida<<"}"<<endl;
-}
+	
+	char compilar_dot[100];
+	strcpy(compilar_dot,"dot -Tpng ");
+	strcat(compilar_dot,nombre_archivo);
+	strcat(compilar_dot," -o ");
+	strcat(compilar_dot,buf);
+	strcat(compilar_dot,".png");
+		
+	FILE * f2 = popen( compilar_dot, "r" );
+    if ( f2 == 0 ) {
+        fprintf( stderr, "No se pudo ejecutar el compilar_dot.\n" );
+        return 1;
+    }
+    char mostrar_png[100];
+	strcpy(mostrar_png,"eog ");
+	strcat(mostrar_png,buf);
+	strcat(mostrar_png,".png");
+	
+	cout<<mostrar_png<<endl;
+	
+    int Input[2], Output[2];
 
-void Administrador::mostrar_grafo(){
+	pipe( Input );
+	pipe( Output );
 
+	if( fork() ){
+		// Este es el proceso padre.
+		// Close the reading end of the input pipe.
+		close( Input[ 0 ] );
+		// Close the writing end of the output pipe
+		close( Output[ 1 ] );
+
+		// Here we can interact with the subprocess.  Write to the subprocesses stdin via Input[ 1 ], and read from the subprocesses stdout via Output[ 0 ].
+	}
+	else{    // We're in the child here.
+		close( Input[ 1 ] );
+		dup2( Input[ 0 ], STDIN_FILENO );
+		close( Output[ 0 ] );
+		dup2( Output[ 1 ], STDOUT_FILENO );
+
+		FILE * f3 = popen( mostrar_png, "r" );
+		if ( f3 == 0 ) {
+			fprintf( stderr, "No se pudo ejecutar el mostrar_png.\n" );
+			return 1;
+		}
+	}
 }

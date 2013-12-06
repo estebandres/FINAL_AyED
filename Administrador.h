@@ -18,18 +18,22 @@ class Administrador
 	private:
 		Lista<Router> routers;
 		Lista<Computadora*> computadoras;
-		Lista<Arco> arcos; 
+		Lista<Arco> arcos;
+		Lista<Arco> arcos_originales; 
 		Lista<Conexion> conexiones;
 		int cant_comp_por_router;
 		int cant_routers;
+		int total_pag; 
 		
 	public:
 		Administrador();
 		void simular_cant_paso(int);
 		void simular_un_paso();
 		Lista<Etiqueta> Dijkstra(int);
+		void calcular_tablas();
 		void leer_archivo(string);
-		void crear_conexiones()
+		void crear_conexiones();
+		void dibujar_grafo();
 };
 
 #endif // Paquete_H

@@ -36,24 +36,33 @@ void Administrador::crear_pagina(){
 	int arreglo[2]={k,l};
 	vector<int> ip_comp_destino(arreglo,arreglo+sizeof(arreglo)/sizeof(arreglo[0]));
 	Pagina nva_pag(total_pag, rand()%(TAM_MAX_PAG+1-TAM_MIN_PAG)+TAM_MIN_PAG, ip_comp_origen, ip_comp_destino);
-	*computadoras.elemento_pos(cant_comp_por_router * cant_routers-1).enviar_pagina(nva_pag);//Ojo revisar si se envia desde la máquina correcta.
+	//*computadoras.elemento_pos( cant_comp_por_router * cant_routers-1).enviar_pagina(nva_pag);//Ojo revisar si se envia desde la máquina correcta.
+	srand(time(0));
+	int m = rand() % (computadoras.tamanio()+1);
+	computadoras.elemento_pos(m)->enviar_pagina(nva_pag);
 	total_pag++;
 }
 
-void Administrador::simular_un_paso(){//recorrer la lista de router y ejecutar enviar y despues en otro ciclo recibir
+void Administrador::simular_un_paso(){//recorrer la lista de routers y ejecutar enviar y despues en otro ciclo recibir
 	
-	if(cant_pasos == 0){
+	if(cant_pasos == 0){//Si este es el primer paso de simulación
+		this->calcular_tablas();
 		int bandera=cant_comp_por_routers*cant_routers; 
 		while(bandera==0){
-			this->crear_pagina();
+			this->crear_pagina();//Se crearán tantas páginas como computadoras tiene el sistema.
 			bandera--;
 		}
 	}
-	if((cant_pasos % 5) == 0){
-		crear_pagina();
+	if((cant_pasos % 5) == 0){//Cada 5 pasos de simulación se crea una página.
+		this->crear_pagina();
 	}
-	if((cant_pasos % 30) == 0){
-		this->recalcular_tablas();
+	if((cant_pasos % 30) == 0){//Cada 30 pasos de simulación se recalculan las tablas de enrutamiento.
+		int nvo_peso;		
+		for(int i=0;i<arcos.tamanio();i++){
+			nvo_peso=arcos_originales.elemento_pos(i).peso()/routers.elemento_pos(arcos_originales.elemento_pos(i).destino()).total_paquetes();
+			arcos.elemento_pos(i).mod_peso(nvo_peso);
+		}
+		this->calcular_tablas();
 	}
 
 	for(int i=0;i<routers.tamanio();i++){
@@ -62,14 +71,12 @@ void Administrador::simular_un_paso(){//recorrer la lista de router y ejecutar e
 	for(int i=0;i<routers.tamanio();i++){
 		routers.elemento_pos(i).recibir_paquetes();
 	}
-	
-
 }
 
 Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 	Lista<int> S;
 	Lista<int> Q;
-	Lista<Etiqueta> etiquetas;
+	Lista<Etiqueta> etiquetas; 
 //------------INICIALIZACIÓN-------------------------------------
 	for(int i=0; i<cant_routers;i++){
 		if(i==nodo_inicio){
@@ -86,7 +93,7 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 		int peso_tray_menor=INF;
 		int peso_tray_actual;
 		int i;
-		for(i=0; i<Q.tamanio(); i++){
+		for(i=0; i<Q.tamanio(); i++){//Para todos las posiciones de la lista de etiquetas señecciono la de menor peso_trayecto.
 			peso_tray_actual=etiquetas.elemento_pos(Q.elemento_pos(i)).peso_trayecto();
 			if(peso_tray_actual<peso_tray_menor){
 				peso_tray_menor=peso_tray_actual;
@@ -103,7 +110,7 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 			arco_actual=conexiones.elemento_pos(k);
 			peso_tray_nvo=etiquetas.elemento_pos(nodo_prox).peso_trayecto()+arco_actual.peso();
 			etiqueta_vieja = etiquetas.elemento_pos(arco_actual.destino())
-			if(arco_actual.origen()==nodo_prox){//Si el arco tiene como orígen el nodo que estamos analizando.
+			if(arco_actual.origen()==nodo_prox){//Si el arco tiene como orígen el nodo que estamos analizando. Osea corroboro sobre los que son adyancentes al nodo_prox.
 				if(!S.contiene(arco_actual.destino())){//Si el destino de ese arco está dentro de los nodos calculados.
 					if(etiqueta_vieja.peso_trayecto()>peso_tray_nvo){//Si el peso del trayecto de la etiqueta vieja es mayor que el peso del trayecto calculado.
 						etiqueta_vieja.mod_peso_trayecto(peso_tray_nvo);
@@ -117,7 +124,7 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 	}
 }
 
-void Administrador::recalcular_tablas(){
+void Administrador::calcular_tablas(){
 	for(int i=0; i<cant_routers; i++){
 		routers.obtener_pos(i).actualizar_tabla(Dijkstra(i));
 	}
@@ -129,14 +136,15 @@ void Administrador::leer_archivo(string nombre_archivo){
 	while(getline(archivo_conf, linea)){
 		switch(linea[0]){
 		case('#'){
-			linea.erase(line.begin());
+			linea.erase(line.begin());//borra el primer caracter de la línea, en este caso el símbolo #
 			std::istringstream iss(line);
 			int nro;
 			if (!(iss >> nro)) { 
 				cout<<"Error en la lectura de la cantidad de routers."<<endl;
 				break; 
 			} // error
-			for(int i=0; i<nro; i++){
+			cant_routers=nro;
+			for(int i=0; i<cant_routers; i++){
 				Router router_i(i);
 				routers.agregar(router_i);
 			}
@@ -145,20 +153,22 @@ void Administrador::leer_archivo(string nombre_archivo){
 		case('*'):
 		{
 			linea.erase(line.begin());
-			std::istringstream iss(line);
+			std::istringstream iss(linea);
 			int nro;
 			if (!(iss >> nro)) { 
 				cout<<"Error en la lectura de la cantidad de computadoras por router."<<endl;
 				break; 
 			} // error
-			for(int i=0; i<routers.tamanio(); i++){
-				for(int j=0; j<nro; j++){
+			cant_comp_por_router=nro;
+			for(int i=0; i<cant_routers; i++){
+				for(int j=0; j<cant_comp_por_router; j++){
 					int arreglo[]={i,j};
 					vector<int> ip_comp_i_j(arreglo,arreglo+sizeof(arreglo)/sizeof(arreglo[0]));
 					Router *ptr_router_i=&routers.elemento_pos(i);//puntero al router de la posicion i de la lista de routers de la red.
+					
 					Computadora computadora_i_j(ip_comp_i_j,ptr_router);
-					Computadora *ptr_comp_i_j=&computadora_i_j;//puntero a la computadora recien creada
-					computadoras.agregar(computadora_i_j);//se agrega la computadora a la lista de computadoras de la red.
+					Computadora *ptr_comp_i_j = &computadora_i_j;//puntero a la computadora recien creada
+					computadoras.agregar(ptr_comp_i_j);//se agrega el puntero de la computadora recien creada a la lista de computadoras de la red.
 					routers.elemento_pos(i).agregar_computadora(ptr_comp_i_j);//se agrega la computadora a la lista de punteros a computadoras del router al que pertenece.
 				}
 			}
@@ -167,13 +177,16 @@ void Administrador::leer_archivo(string nombre_archivo){
 		case('@'):
 		{
 			linea.erase(line.begin());
-			std::istringstream iss(line);
+			std::istringstream iss(linea);
 			int router_i, router_j, ancho_banda;
 			if (!(iss >> router_i >> routeer_j >> ancho_banda)) { 
 				cout<<"Error en la lectura de la conexion de router."<<endl;
 				break; 
 			} // error
-			Arco arco_k(ip_router_i,ip_router_j,ancho_banda);
+			int peso = ancho_banda/routers.elemento_pos(router_j).total_paquetes();
+			Arco arco_o(router_i,router_j,ancho_banda);
+			arcos_originales.agregar(arco_o);
+			Arco arco_k(router_i,router_j,peso);
 			arcos.agregar(arco_k);
 		}
 		break;
@@ -183,8 +196,12 @@ void Administrador::leer_archivo(string nombre_archivo){
 
 void Administrador::crear_conexiones(){
 	for(int i=0; i<arcos.tamanio(); i++){
-		Conexion nva_conexion(arcos.elemento_pos(i).nodo_i(), arcos.elemento_pos(i).nodo_j(), arcos.elemento_pos(i).peso());
+		Conexion nva_conexion(arcos.elemento_pos(i).origen(), arcos.elemento_pos(i).destino(), arcos_originales.elemento_pos(i).peso());
 		bool existe=false;
+/*
+Aparece el inconveniente de que si dos arcos con los mismos terminales tienen distinto peso se generará una única conexión con
+el ancho de banda del primer arco analizado. OJO! 
+*/
 		for(int m=0; m<conexiones.tamanio(); m++){
 			if(nva_conexion.terminales()==conexiones.elemento_pos(m).terminales())
 			existe=true;

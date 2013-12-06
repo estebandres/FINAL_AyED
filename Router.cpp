@@ -1,11 +1,11 @@
 #include "Router.h"
 
 Router::Router(int ip_router)
-	:ip(ip_router),computadoras(),tabla_enrutamiento(),organizador_paquetes(),conexiones(){}
+	:ip(ip_router),computadoras(),tabla_enrutamiento(),organizador_paquetes(ip_router),conexiones(){}
 
 void Router::recibir_pagina(Pagina pagina_recibida){
 	for(int i=0;i<pagina_recibida.obtener_tamanio();i++){
-	this->organizador_paquetes.agregar_paquete(Paquete(pagina_recibida.obtener_ip_comp_origen(), pagina_recibida.obtener_ip_comp_destino(), pagina_recibida.obtener_id(), pagina_recibida.obtener_tamanio(),i));
+		this->organizador_paquetes.agregar_paquete(Paquete(pagina_recibida.obtener_ip_comp_origen(), pagina_recibida.obtener_ip_comp_destino(), pagina_recibida.obtener_id(), pagina_recibida.obtener_tamanio(),i));
 	}
 }
 
@@ -26,6 +26,17 @@ void Router::leer_conexiones(){
 	}
 }
 
+Pagina Router::construir_pagina(Paquete paq_leido){
+	return Pagina(paq_leido.obtener_id_pagina(), paq_leido.obtener_tamanio_pagina(), paq_leido.obtener_ip_comp_origen(), paq_leido.obtener_ip_comp_destino());
+}//Devuelve una página con la informaxión del paquete paq_leido.
+
+void Router::enviar_pagina(Pagina pag_cons){
+	for(int i=0; i<computadoras.tamanio();i++){//recorre la lista de punteros a computadoras y le envpia la página a la maquina apuntada que tiene el mismo ip que el destino de la página.
+		if(computadoras.elemento_pos(i)->obtener_ip() == pag_cons.obtener_ip_comp_destino())
+				computadoras.elemento_pos(i)->recibir_pagina(pag_cons);
+	}
+}
+
 void Router::enviar_paquetes(){
 	this->cargar_conexiones();
 	
@@ -34,23 +45,23 @@ void Router::cargar_conexiones(){//envia el mensaje pero no espera una respuesta
 	bool conexiones_saturadas=false;
 	while(organizador_paquetes.tamanio()!=0 && !conexiones_saturadas){//mientras hayan paquetes en el organizador y las conexiones no esten sat 
 		Paquete paq_envio = this->organizador_paquetes.obtener_paquete();//aqui se puede vaciar el organizador_paquetes -->corta el while
-		int proximo_router=buscar_etiqueta(paq_envio).router_despacho();
+		int router_despacho=buscar_en_tabla(paq_envio).router_despacho();
 		conexiones_saturadas=true;//inicializa en verdadero asi permite hacer la operacion AND. 
-		for(int i=0; i<conexiones.tamanio(); i++){
-			int bornes[]={this->ip,proximo_router};
+		for(int i=0; i<conexiones.tamanio(); i++){//este ciclo recorre todas las conexiones del router en busca de aquella que lo conecta con el router de despacho para tal paquete paw_envio.
+			int bornes[]={this->ip,router_despacho};
 			set<int> estos_terminales(bornes,bornes+2);
 			if(conexiones.elemento_pos(i).obtener_terminales()==estos_terminales)
-				conexion.cargar(paq_envio);
+				conexiones.elemento_pos(i).cargar(paq_envio);
 			conexiones_saturadas=conexiones_saturadas && conexiones.elemento_pos(i).conexion_saturada();//Aqui corta el while si las conexiones estan saturadas.
 		}	
 	}
 }
 
-Etiqueta Router::buscar_etiqueta(Paquete paq){
-	for(int i=0;i<etiquetas.tamanio();i++){
-		if(etiquetas.elemento_pos(i).router_destino() == paq.obtener_ip_comp_origen()[0])
-			return etiquetas.elemento_pos(i);
+Etiqueta Router::buscar_en_tabla(Paquete paq){
+	for(int i=0;i<tabla_enrutamiento.tamanio();i++){
+		if(tabla_enrutamiento.elemento_pos(i).router_destino() == paq.obtener_ip_comp_destino()[0])
+			return tabla_enrutamiento.elemento_pos(i);
 	}
-	assert(0 && "Router::buscar_etiqueta -> \"No se encontró la etiqueta para el destino del paquete.\"");
+	assert(0 && "Router::buscar_en_tabla -> \"No se encontró la etiqueta para el destino del paquete.\"");
 }
 

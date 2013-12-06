@@ -279,7 +279,7 @@ void Administrador::dibujar_grafo(){
 
 		FILE * f3 = popen( mostrar_png, "r" );
 		if ( f3 == 0 ) {
-			fprintf( stderr, "No se pudo ejecutar el mostrar_png.\n" );
+			fprintf( stderr, "No se pudo ejecutar mostrar_png.\n" );
 			return 1;
 		}
 	}

@@ -3,7 +3,10 @@
 #include <iostream>
 
 using namespace std;
-
+/*
+Esta clase representa el arco o la arista de un grafo.
+Es la entidad que conecta dos nodos o vértices y que se le asigna un peso o distancia.
+*/
 class Arco
 {
 	private:
@@ -16,7 +19,7 @@ class Arco
 		int origen();
 		int destino();
 		int peso();
-		void mod_peso(int);
+		void mod_peso(int);//modifica el valor del peso del Arco.
 };
 
 #endif // ARCO_H

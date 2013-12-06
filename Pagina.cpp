@@ -1,4 +1,3 @@
-#include <iostream>
 #include "Pagina.h"
 
 using namespace std;

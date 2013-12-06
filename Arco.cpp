@@ -7,10 +7,10 @@ Arco::Arco(int origen, int destino, int peso){
 Arco::~Arco(){
 }
 int Arco::origen(){
-	return origen;
+	return this->origen;
 }
 int Arco::destino(){
-	return destino;
+	return this->destino;
 }
 void Arco::mod_peso(int nvo_peso){
 	this->peso=nvo_peso;

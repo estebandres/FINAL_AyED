@@ -7,9 +7,11 @@
 #include <set>
 
 #define INF 9999
+#define TAM_MAX_PAG 100
+#define TAM_MIN_PAG 10
 
-Administrador::Administrador(){
-}
+Administrador::Administrador()
+	:routers(),computadoras(),arcos(),conexiones(),cant_comp_por_router(0),cant_routers(0),total_pag(0){}
 
 Administrador::~Administrador(){
 }
@@ -33,9 +35,9 @@ void Administrador::crear_pagina(){
 	int l = rand() % (cant_routers+1);
 	int arreglo[2]={k,l};
 	vector<int> ip_comp_destino(arreglo,arreglo+sizeof(arreglo)/sizeof(arreglo[0]));
+	Pagina nva_pag(total_pag, rand()%(TAM_MAX_PAG+1-TAM_MIN_PAG)+TAM_MIN_PAG, ip_comp_origen, ip_comp_destino);
+	*computadoras.elemento_pos(cant_comp_por_router * cant_routers-1).enviar_pagina(nva_pag);//Ojo revisar si se envia desde la máquina correcta.
 	total_pag++;
-	Pagina nva_pag(total_pag, rand()%(tam_max_pag+1-tam_min_pag)+tam_min_pag, ip_comp_origen, ip_comp_destino);
-	*computadoras.elemento_pos(cant_comp_por_router * cant_routers-1).enviar_pagina(nva_pag);//Ojo revisar si se envia desde la máquina correcta.	
 }
 
 void Administrador::simular_un_paso(){//recorrer la lista de router y ejecutar enviar y despues en otro ciclo recibir

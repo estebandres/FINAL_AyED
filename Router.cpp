@@ -1,13 +1,7 @@
 #include "Router.h"
 
-Router::Router(int ip, Lista<*Router> routers_vecinos, Lista<Maquinas> maquinas, Lista<Etiquetas> tabla_enrutamiento){
-this->ip = ip;
-this->routers_vecinos = routers_vecinos;
-this->maquinas = maquinas;
-this->tabla_enrutamiento = tabla_enrutamiento;
-this->cola_envio = new CDE();
-this->paquetes_recibidos = new CDR();
-}
+Router::Router(int ip_router)
+	:ip(ip_router),computadoras(),tabla_enrutamiento(),organizador_paquetes(),conexiones(){}
 
 void Router::recibir_pagina(Pagina pagina_recibida){
 	for(int i=0;i<pagina_recibida.obtener_tamanio();i++){
@@ -22,7 +16,7 @@ void Router::recibir_paquetes(){
 
 void Router::leer_conexiones(){
 	for(int i=0; i<conexiones.tamanio(); i++){
-		while(!conexiones.elemento_pos(i).conexion_libre()){
+		while(!conexiones.elemento_pos(i).conexion_libre()){//Mientras que la conexión en la posición i de la lsita de conexiones no esté libre...
 			Paquete paq_leido=conexiones.elemento_pos(i).leer();//esta instruccion terminará por liberar la conexion y finalizar el while.
 			bool pag_completa=this->organizador_paquetes.agregar_paquete(paq_leido);
 			if(pagina_completa){//si estan todos los paquetes de una página para este router
@@ -40,7 +34,7 @@ void Router::cargar_conexiones(){//envia el mensaje pero no espera una respuesta
 	bool conexiones_saturadas=false;
 	while(organizador_paquetes.tamanio()!=0 && !conexiones_saturadas){//mientras hayan paquetes en el organizador y las conexiones no esten sat 
 		Paquete paq_envio = this->organizador_paquetes.obtener_paquete();//aqui se puede vaciar el organizador_paquetes -->corta el while
-		int proximo_router=buscar_etiqueta(paq_envio).camino().primer_elemento();
+		int proximo_router=buscar_etiqueta(paq_envio).router_despacho();
 		conexiones_saturadas=true;//inicializa en verdadero asi permite hacer la operacion AND. 
 		for(int i=0; i<conexiones.tamanio(); i++){
 			int bornes[]={this->ip,proximo_router};
@@ -52,7 +46,11 @@ void Router::cargar_conexiones(){//envia el mensaje pero no espera una respuesta
 	}
 }
 
-Etiqueta Router::buscar_etiqueta(Paquete){
-
+Etiqueta Router::buscar_etiqueta(Paquete paq){
+	for(int i=0;i<etiquetas.tamanio();i++){
+		if(etiquetas.elemento_pos(i).router_destino() == paq.obtener_ip_comp_origen()[0])
+			return etiquetas.elemento_pos(i);
+	}
+	assert(0 && "Router::buscar_etiqueta -> \"No se encontró la etiqueta para el destino del paquete.\"");
 }
 

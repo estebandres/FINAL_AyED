@@ -8,26 +8,20 @@ class Router
 {
 	private:
 		int ip;
-		//Lista<*Router> routers_vecinos;
-		Lista<Computadora*> Computadoras;
+		Lista<Computadora*> computadoras;
 		Lista<Etiqueta> tabla_enrutamiento;
 		Biblioteca_paquetes organizador_paquetes;
 		Lista<Conexion> conexiones;
-		//Lista<int> id_paginas_recibidas;
 		
-	public:		
-		Router(int, Lista<*Computadora>, Lista<Etiquetas>, Lista<Conexiones>);
-		//Router(int, Lista<*Router>, Lista<*Computadora>);
-		void recibir_pagina(Pagina);
-		void recibir_paquete(Paquete);//agrega el paquete al organizador_paquetes 
-		void encolar_paquetes();//carga las colas_envio con los paquetes que va sacando del organizador_paquetes
-//una vez que estan llenas o no tengo mas paquetes en el organizador_paquetes termina el método.
-		void enviar_paquete();//vacia las colas de envío.Este se ejecuta primero en un ciclo de simulacion.
-		void enviar_pagina(Pagina);//Recibe una página del organizador de paquetes y se la envía a la computadora destino.
-		void cargar_router_vecino(*Router vecino, int ancho_banda);//Este método lo ejecuta el administrador cuando setea la red.
-		routers_vecinos.agregar(*Router vecino);
-		colas_envio.agregar(new Cola<Paquete>(ancho_banda));
-		void actualizar_tabla(Lista<Etiqueta>);//Este metodo lo ejecuta el administrador cuando corre dijkstra.
+	public:
+		Router(int);		
+		//Router(int, Lista<*Computadora>, Lista<Etiqueta>, Lista<Conexion>);
+		void recibir_pagina(Pagina pagina_recibida){
+		void recibir_paquetes()
+		void leer_conexiones()
+		void enviar_paquetes()
+		void cargar_conexiones()
+		Etiqueta buscar_etiqueta(Paquete)
 };
 
 #endif // Paquete_H

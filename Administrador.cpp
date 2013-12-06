@@ -103,11 +103,11 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 			etiqueta_vieja = etiquetas.elemento_pos(arco_actual.destino())
 			if(arco_actual.origen()==nodo_prox){//Si el arco tiene como orígen el nodo que estamos analizando.
 				if(!S.contiene(arco_actual.destino())){//Si el destino de ese arco está dentro de los nodos calculados.
-					if(etiqueta_vieja.peso_trayecto()>peso_tray_nvo){//Si el peso del la etiqueta vieja es mayor que el peso del trayecto calculado.
+					if(etiqueta_vieja.peso_trayecto()>peso_tray_nvo){//Si el peso del trayecto de la etiqueta vieja es mayor que el peso del trayecto calculado.
 						etiqueta_vieja.mod_peso_trayecto(peso_tray_nvo);
 					}
-					if(etiqueta_vieja.consecutivo()==-1){//Si no se ha asignado el consecutivo de la etiqueta
-						etiqueta_vieja.mod_consecutivo(etiquetas.elemento_pos(nodo_prox).consecutivo());//Se le asigna el consecutivo de su predecesor.
+					if(etiqueta_vieja.router_despacho()==-1){//Si no se ha asignado el router de despacho a la etiqueta...
+						etiqueta_vieja.mod_despacho(etiquetas.elemento_pos(nodo_prox).router_despacho);//Se le asigna el router de despacho de su predecesor.
 					}
 				}
 			}

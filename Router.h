@@ -17,7 +17,8 @@ class Router
 		Lista<Conexion> conexiones;
 		
 	public:
-		Router(int);		
+		Router(int);
+		~Router();		
 		//Router(int, Lista<*Computadora>, Lista<Etiqueta>, Lista<Conexion>);
 		void recibir_pagina(Pagina pagina_recibida);
 		void recibir_paquetes();

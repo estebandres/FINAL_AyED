@@ -1,13 +1,13 @@
 #include "Conexion.h"
 
-Conexion::Conexion(){
-}
-
 Conexion::Conexion(int terminal_i, int terminal_j, int ancho){
 	int bornes[]={terminal_i,terminal_j};//arreglo de dos enteros necesario para crear un objeto de tipo set<int>;
 	this->terminales=set<int>(bornes,bornes+2);
 	this->ancho_banda=ancho;
 	this->canal.fijar_tamanio_max(this->ancho_banda);
+}
+
+Conexion::~Conexion(){
 }
 
 set<int> Conexion::obtener_terminales(){

@@ -3,7 +3,6 @@ Biblioteca_paquetes::Biblioteca_paquetes(int mi_rout)
 	:clasificador(), mi_router(mi_rout){}
 
 Biblioteca_paquetes::~Biblioteca_paquetes(){
-	//delete &clasificador;
 }
 
 int Biblioteca_paquetes::agregar_paquete(Paquete paq_recibido){

@@ -3,6 +3,9 @@
 Router::Router(int ip_router)
 	:ip(ip_router),computadoras(),tabla_enrutamiento(),organizador_paquetes(ip_router),conexiones(){}
 
+Router::~Router(){
+}
+
 void Router::recibir_pagina(Pagina pagina_recibida){
 	for(int i=0;i<pagina_recibida.obtener_tamanio();i++){
 		this->organizador_paquetes.agregar_paquete(Paquete(pagina_recibida.obtener_ip_comp_origen(), pagina_recibida.obtener_ip_comp_destino(), pagina_recibida.obtener_id(), pagina_recibida.obtener_tamanio(),i));

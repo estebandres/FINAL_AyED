@@ -23,10 +23,11 @@ class Administrador
 		Lista<Conexion> conexiones;
 		int cant_comp_por_router;
 		int cant_routers;
-		int total_pag; 
+		int total_pag;
 		
 	public:
 		Administrador();
+		~Administrador();
 		void simular_cant_paso(int);
 		void simular_un_paso();
 		Lista<Etiqueta> Dijkstra(int);

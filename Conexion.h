@@ -16,7 +16,7 @@ class Conexion
 		Cola<Paquete> canal;
 	public:		
 		Conexion(int, int, int);
-		//~Conexion();
+		~Conexion();
 		set<int> obtener_terminales();
 		void cargar(Paquete);
 		Paquete leer();

@@ -16,7 +16,7 @@ class Paquete
 		
 	public:		
 		Paquete();
-		Paquete(vector<int> ip_comp_origen, vector<int> ip_comp_destino, int id_pagina, int tamanio_pagina, int nro_orden);
+		Paquete(vector<int>, vector<int>, int, int, int);
 		~Paquete();
 		vector<int> obtener_ip_comp_origen();
 		vector<int> obtener_ip_comp_destino();

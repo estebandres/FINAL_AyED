@@ -183,10 +183,10 @@ void Administrador::leer_archivo(string nombre_archivo){
 				cout<<"Error en la lectura de la conexion de router."<<endl;
 				break; 
 			} // error
-			int peso = ancho_banda/routers.elemento_pos(router_j).total_paquetes();
+			//int peso = ancho_banda/routers.elemento_pos(router_j).total_paquetes();//No tiene propósito hacer esto al iniciar la simulación ya que los routers no tienen paquetes que enviar.
 			Arco arco_o(router_i,router_j,ancho_banda);
 			arcos_originales.agregar(arco_o);
-			Arco arco_k(router_i,router_j,peso);
+			Arco arco_k(router_i,router_j,ancho_banda);
 			arcos.agregar(arco_k);
 		}
 		break;

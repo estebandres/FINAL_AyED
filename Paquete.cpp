@@ -41,7 +41,8 @@ int Paquete::obtener_tamanio_pagina(){
 }
 
 void Paquete::imprimir(){
-	cout<<"PAQUETE:"<<this->nro_orden<<" --> PÁGINA: "<<this->id_pagina<<endl;
+	//cout<<"PAQUETE:"<<this->nro_orden<<" --> PÁGINA: "<<this->id_pagina<<endl;
+	cout<<"[PAG:"<<this->id_pagina<<",Ro:"<<this->ip_comp_origen[0]<<",Rd:"<<this->ip_comp_destino[0]<<",ORD:"<<this->nro_orden<<"]";
 }
 
 void Paquete::cambiar_orden(int nvo_nro_orden){

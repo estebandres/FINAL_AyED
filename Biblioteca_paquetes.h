@@ -21,6 +21,7 @@ class Biblioteca_paquetes
 		~Biblioteca_paquetes();
 		int agregar_paquete(Paquete);
 		Paquete obtener_paquete();
+		void imprimir();
 };
 
 #endif // Paquete_H

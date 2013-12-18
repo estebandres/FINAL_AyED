@@ -82,3 +82,13 @@ Paquete Biblioteca_paquetes::obtener_paquete(){
 		clasificador.reencolar();
 	return paquete_envio;
 }
+
+void Biblioteca_paquetes::imprimir(){
+	for(int i=0;i<clasificador.tamanio();i++){
+		for(int j=0;j<clasificador.elemento_pos(i);j++){
+			for(int k=0;k<clasificador.elemento_pos(i).elemento_pos(j);k++){
+				cout<<clasificador.elemento_pos(i).elemento_pos(j).elemento_pos(k).imprimir()<<" ; "<<endl;
+			}
+		}
+	}
+}

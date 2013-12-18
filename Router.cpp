@@ -1,4 +1,16 @@
 #include "Router.h"
+#define BOLD_RED     "\x1b[31;1m"
+#define BOLD_BLUE    "\x1b[34;1m"
+#define BOLD_GREEN   "\x1b[32;1m"
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_BRIGHT  "\x1b[1m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+
 
 Router::Router(int ip_router)
 	:ip(ip_router),computadoras(),tabla_enrutamiento(),organizador_paquetes(ip_router),conexiones(){}
@@ -68,3 +80,10 @@ Etiqueta Router::buscar_en_tabla(Paquete paq){
 	assert(0 && "Router::buscar_en_tabla -> \"No se encontró la etiqueta para el destino del paquete.\"");
 }
 
+void Router::mostrar_paquetes(){
+	cout<<BOLD_GREEN "-----------------------------------------------------------------------------" ANSI_COLOR_RESET<<endl;
+	cout << BOLD_RED "R"<<a<<":"<< BOLD_BLUE "LISTA DE PAQUETES" ANSI_COLOR_RESET<<endl;
+	//cout<<"R"<<this->ip<<":"<<endl;
+	this->organizador_paquetes.imprimir();
+	cout<<BOLD_GREEN "-----------------------------------------------------------------------------" ANSI_COLOR_RESET<<endl;
+}

@@ -26,6 +26,7 @@ class Router
 		void enviar_paquetes();
 		void cargar_conexiones();
 		Etiqueta buscar_en_tabla(Paquete);
+		void mostrar_paquetes();
 };
 
 #endif // Paquete_H

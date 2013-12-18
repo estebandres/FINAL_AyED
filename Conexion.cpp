@@ -1,18 +1,15 @@
 #include "Conexion.h"
 
-Conexion::Conexion(int terminal_i, int terminal_j, int ancho){
-	int bornes[]={terminal_i,terminal_j};//arreglo de dos enteros necesario para crear un objeto de tipo set<int>;
-	this->terminales=set<int>(bornes,bornes+2);
-	this->ancho_banda=ancho;
-	this->canal.fijar_tamanio_max(this->ancho_banda);
+Conexion::Conexion(int origen, int destino, int ancho) : Arco(origen, destino, ancho){
+	this->canal.fijar_tamanio_max(ancho);
 }
 
 Conexion::~Conexion(){
 }
-
+/*
 set<int> Conexion::obtener_terminales(){
 	return this->terminales;
-}
+}*/
 
 void Conexion::cargar(Paquete){
 	//assert(canal.cola_llena() && "Se intenta cargar una conexion que está saturada.");

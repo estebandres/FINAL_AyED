@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Paquete.h"
-#include <stdlib>
 #include <vector>
 
 using namespace std;

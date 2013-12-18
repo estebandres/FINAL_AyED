@@ -107,7 +107,7 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 		int peso_tray_nvo;
 		Etiqueta etiqueta_vieja;
 		for(int k=0;k<arcos.tamanio();k++){//para cada uno de los arcos del grafo.
-			arco_actual=conexiones.elemento_pos(k);
+			arco_actual=arcos.elemento_pos(k);
 			peso_tray_nvo=etiquetas.elemento_pos(nodo_prox).peso_trayecto()+arco_actual.peso();
 			etiqueta_vieja = etiquetas.elemento_pos(arco_actual.destino())
 			if(arco_actual.origen()==nodo_prox){//Si el arco tiene como orígen el nodo que estamos analizando. Osea corroboro sobre los que son adyancentes al nodo_prox.
@@ -178,30 +178,33 @@ void Administrador::leer_archivo(string nombre_archivo){
 		{
 			linea.erase(line.begin());
 			std::istringstream iss(linea);
-			int router_i, router_j, ancho_banda;
+			int origen, destino, ancho_banda;
 			if (!(iss >> router_i >> routeer_j >> ancho_banda)) { 
 				cout<<"Error en la lectura de la conexion de router."<<endl;
 				break; 
 			} // error
 			//int peso = ancho_banda/routers.elemento_pos(router_j).total_paquetes();//No tiene propósito hacer esto al iniciar la simulación ya que los routers no tienen paquetes que enviar.
-			Arco arco_o(router_i,router_j,ancho_banda);
-			arcos_originales.agregar(arco_o);
-			Arco arco_k(router_i,router_j,ancho_banda);
-			arcos.agregar(arco_k);
+			Conexion nva_conexion(origen, destino, ancho_banda);
+			Conexion ptr_conexion = &nva_conexion;
+			conexiones.agregar(nva_conexion);
+			routers.elemento_pos(ptr_conexion->origen()).agregar_conexion_envio(ptr_conexion);
+			routers.elemento_pos(ptr_conexion->destino()).agregar_conexion_recepcion(ptr_conexion);
+			Arco nvo_arco(router_i,router_j,ancho_banda);
+			arcos.agregar(nvo_arco);
 		}
 		break;
 		}
 	}
 }
 
+/*
 void Administrador::crear_conexiones(){
 	for(int i=0; i<arcos.tamanio(); i++){
 		Conexion nva_conexion(arcos.elemento_pos(i).origen(), arcos.elemento_pos(i).destino(), arcos_originales.elemento_pos(i).peso());
 		bool existe=false;
-/*
-Aparece el inconveniente de que si dos arcos con los mismos terminales tienen distinto peso se generará una única conexión con
-el ancho de banda del primer arco analizado. OJO! 
-*/
+
+//Aparece el inconveniente de que si dos arcos con los mismos terminales tienen distinto peso se generará una única conexión con
+//el ancho de banda del primer arco analizado. OJO! 
 		for(int m=0; m<conexiones.tamanio(); m++){
 			if(nva_conexion.terminales()==conexiones.elemento_pos(m).terminales())
 			existe=true;
@@ -210,7 +213,7 @@ el ancho de banda del primer arco analizado. OJO!
 			conexiones.agregar(nva_conexion);
 		}
 	}
-}
+}*/
 
 void Administrador::dibujar_grafo(){
 	
@@ -251,9 +254,10 @@ void Administrador::dibujar_grafo(){
 		flujo_salida<<i<<" [label="<<"\"R"<<i<<"\""<<",shape=doublecircle,fontsize=10];"<<endl;
 	}
 	for(int k=0;k<conexiones.tamanio();k++){
-		set<int>::iterator it_1 = conexiones.elemento_pos(k).terminales().begin();
+		/*set<int>::iterator it_1 = conexiones.elemento_pos(k).terminales().begin();
 		set<int>::iterator it_2 = it_1++;
-		flujo_salida<<*it_1<<" --> "<<*it_2<<" [color=blue,penwidth=3.0]"<<endl;
+		flujo_salida<<*it_1<<" --> "<<*it_2<<" [color=blue,penwidth=3.0]"<<endl;*/
+		flujo_salida<<conexiones.primer_elemento().origen()<<" --> "<<conexiones.primer_elemento().destino()<<" [color=blue,penwidth=3.0]"<<endl;
 	}
 	flujo_salida<<"}"<<endl;
 	

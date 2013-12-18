@@ -2,12 +2,10 @@
 #ifndef _Lista_H_
 #define _Lista_H_
 #include <assert.h>
+#include <iostream>
 
-//FALLA LA COMPILACION
+using namespace std;
 
-
-/*!Begin Snippet:fullNodo*/
-/*!Begin Snippet:private*/
 template <typename T>
 
 //implementacion CLASE LISTA
@@ -78,6 +76,7 @@ public:
 	void insertar_nodo_pos(T, int);
 	void quitar_nodo_pos(int);
 	void intercambiar_pos_nodos(int, int);
+	bool contiene(T);
 
 };
 
@@ -346,8 +345,9 @@ void Lista<T>::intercambiar_pos_nodos(int pos_1, int pos_2){
 	}
 }
 
+template <typename T>
 bool Lista<T>::contiene(T elemento){
-	bool contenidp = false ;
+	bool contenido = false ;
 	Nodo* ptr_nodo_actual = inicio;
 
     while (ptr_nodo_actual != NULL) {

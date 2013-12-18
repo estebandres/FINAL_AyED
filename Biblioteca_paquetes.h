@@ -1,7 +1,8 @@
 #ifndef BIBLIOTECA_PAQUETES_H
 #define BIBLIOTECA_PAQUETES_H
 #include <iostream>
-
+#include "Cola.h"
+#include "Paquete.h"
 using namespace std;
 /*
 Esta clase es la estructura de datos que garantiza justicia en el envío de paquetes, esto es,

@@ -19,7 +19,6 @@ class Administrador
 		Lista<Router> routers;
 		Lista<Computadora*> computadoras;
 		Lista<Arco> arcos;
-		Lista<Arco> arcos_originales; 
 		Lista<Conexion> conexiones;
 		int cant_comp_por_router;
 		int cant_routers;

@@ -25,3 +25,4 @@ vector<int> Computadora::obtener_ip(){
 }
 
 
+

@@ -5,13 +5,17 @@
 #include <string>
 #include <string.h>
 #include <set>
+#include <sys/types.h>
+#include <signal.h>
+#include <unistd.h>
+
 
 #define INF 9999
 #define TAM_MAX_PAG 100
 #define TAM_MIN_PAG 10
 
 Administrador::Administrador()
-	:routers(),computadoras(),arcos(),conexiones(),cant_comp_por_router(0),cant_routers(0),total_pag(0){}
+	:routers(),computadoras(),arcos(),conexiones(),cant_comp_por_router(0),cant_routers(0),total_pag(0),cant_pasos(0){}
 
 Administrador::~Administrador(){
 }
@@ -47,7 +51,7 @@ void Administrador::simular_un_paso(){//recorrer la lista de routers y ejecutar 
 	
 	if(cant_pasos == 0){//Si este es el primer paso de simulación
 		this->calcular_tablas();
-		int bandera=cant_comp_por_routers*cant_routers; 
+		int bandera=cant_comp_por_router*cant_routers; 
 		while(bandera==0){
 			this->crear_pagina();//Se crearán tantas páginas como computadoras tiene el sistema.
 			bandera--;
@@ -116,30 +120,31 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 					if(etiqueta_vieja->peso_total()>peso_tray_nvo){//Si el peso del trayecto de la etiqueta vieja es mayor que el peso del trayecto calculado.
 						etiqueta_vieja->mod_peso_trayecto(peso_tray_nvo);
 					}
-					if(etiqueta_vieja->router_despacho()==-1 || etiqueta_vieja->router_despacho()==nodo_inicio){//Si no se ha asignado el router de despacho a la etiqueta...
-						etiqueta_vieja->mod_despacho(etiquetas.elemento_pos(nodo_elegido).router_despacho);//Se le asigna el router de despacho de su predecesor.
+					if(etiqueta_vieja->despacho()==-1 || etiqueta_vieja->despacho()==nodo_inicio){//Si no se ha asignado el router de despacho a la etiqueta...
+						etiqueta_vieja->mod_despacho(etiquetas.elemento_pos(nodo_elegido).despacho());//Se le asigna el router de despacho de su predecesor.
 					}
 				}
 			}
 		}
 	}
+	return etiquetas;
 }
 
 void Administrador::calcular_tablas(){
 	for(int i=0; i<cant_routers; i++){
-		routers.obtener_pos(i).actualizar_tabla(Dijkstra(i));
+		routers.elemento_pos(i).actualizar_tabla(Dijkstra(i));
 	}
 }
 
-void Administrador::leer_archivo(string nombre_archivo){
-	std::ifstream archivo_conf = infile(nombre_archivo);
+void Administrador::leer_archivo(){
+	std::ifstream archivo_conf("config.txt");
 	string linea;
 	while(getline(archivo_conf, linea)){
 		switch(linea[0]){
 		case('#'):
 		{
-			linea.erase(line.begin());//borra el primer caracter de la línea, en este caso el símbolo #
-			std::istringstream iss(line);
+			linea.erase(linea.begin());//borra el primer caracter de la línea, en este caso el símbolo #
+			std::istringstream iss(linea);
 			int nro;
 			if (!(iss >> nro)) { 
 				cout<<"Error en la lectura de la cantidad de routers."<<endl;
@@ -181,17 +186,17 @@ void Administrador::leer_archivo(string nombre_archivo){
 			linea.erase(line.begin());
 			std::istringstream iss(linea);
 			int origen, destino, ancho_banda;
-			if (!(iss >> router_i >> routeer_j >> ancho_banda)) { 
+			if (!(iss >> origen >> destino >> ancho_banda)) { 
 				cout<<"Error en la lectura de la conexion de router."<<endl;
 				break; 
 			} // error
 			//int peso = ancho_banda/routers.elemento_pos(router_j).total_paquetes();//No tiene propósito hacer esto al iniciar la simulación ya que los routers no tienen paquetes que enviar.
 			Conexion nva_conexion(origen, destino, ancho_banda);
-			Conexion ptr_conexion = &nva_conexion;
+			Conexion* ptr_conexion = &nva_conexion;
 			conexiones.agregar(nva_conexion);
 			routers.elemento_pos(ptr_conexion->origen()).agregar_conexion_envio(ptr_conexion);
 			routers.elemento_pos(ptr_conexion->destino()).agregar_conexion_recepcion(ptr_conexion);
-			Arco nvo_arco(router_i,router_j,ancho_banda);
+			Arco nvo_arco(origen, destino, ancho_banda);
 			arcos.agregar(nvo_arco);
 		}
 		break;
@@ -217,7 +222,7 @@ void Administrador::crear_conexiones(){
 	}
 }*/
 
-void Administrador::dibujar_grafo(){
+int Administrador::dibujar_grafo(){
 	
 	FILE * f = popen( "date +\"%m-%d_%H-%M-%S\"", "r" );
     if ( f == 0 ) {
@@ -308,4 +313,5 @@ void Administrador::dibujar_grafo(){
 			return 1;
 		}
 	}
+	return 0;
 }

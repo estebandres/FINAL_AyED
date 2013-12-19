@@ -23,17 +23,18 @@ class Administrador
 		int cant_comp_por_router;
 		int cant_routers;
 		int total_pag;
+		int cant_pasos;
 		
 	public:
 		Administrador();
 		~Administrador();
-		void simular_cant_paso(int);
+		void simular_cant_pasos(int);
 		void simular_un_paso();
 		Lista<Etiqueta> Dijkstra(int);
 		void calcular_tablas();
 		void leer_archivo(string);
 		void crear_conexiones();
-		void dibujar_grafo();
+		int dibujar_grafo();
 };
 
 #endif // Paquete_H

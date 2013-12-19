@@ -11,8 +11,8 @@
 
 
 #define INF 9999
-#define TAM_MAX_PAG 100
-#define TAM_MIN_PAG 10
+#define TAM_MAX_PAG 25
+#define TAM_MIN_PAG 5
 
 Administrador::Administrador()
 	:routers(),computadoras(),arcos(),conexiones(),cant_comp_por_router(0),cant_routers(0),total_pag(0),cant_pasos(0){}
@@ -21,6 +21,7 @@ Administrador::~Administrador(){
 }
 
 void Administrador::simular_cant_pasos(int cant_pasos){
+		this->cant_pasos=this->cant_pasos+cant_pasos;
 		for(int i=0; i<cant_pasos; i++){
 			this->simular_un_paso();
 		}
@@ -30,20 +31,18 @@ void Administrador::crear_pagina(){
 //Cada cierta cantidad de pasos de simulacion (5) se generaran paginas aleatorioas de compuatadoras aleatorias.
 //
 	srand(time(0));
-	int i = rand() % (cant_comp_por_router+1);
-	int j = rand() % (cant_routers+1);
+	int i = rand() % (cant_routers+1);
+	int j = rand() % (cant_comp_por_router+1);//el +1 vá por definición de rand().
 	int arreglo1[2]={i,j};
 	vector<int> ip_comp_origen(arreglo1,arreglo1+sizeof(arreglo1)/sizeof(arreglo1[0]));
 	srand(time(0));
-	int k = rand() % (cant_comp_por_router+1);
-	int l = rand() % (cant_routers+1);
+	int k = rand() % (cant_routers+1);
+	int l = rand() % (cant_comp_por_router+1);
 	int arreglo2[2]={k,l};
 	vector<int> ip_comp_destino(arreglo2,arreglo2+sizeof(arreglo2)/sizeof(arreglo2[0]));
 	Pagina nva_pag(total_pag, rand()%(TAM_MAX_PAG+1-TAM_MIN_PAG)+TAM_MIN_PAG, ip_comp_origen, ip_comp_destino);
-	//*computadoras.elemento_pos( cant_comp_por_router * cant_routers-1).enviar_pagina(nva_pag);//Ojo revisar si se envia desde la máquina correcta.
-	srand(time(0));
-	int m = rand() % (computadoras.tamanio()+1);
-	computadoras.elemento_pos(m)->enviar_pagina(nva_pag);
+	//Se envía la página creada al router que corresponde.
+	routers.elemento_pos(i).recibir_pagina(nva_pag);//Por razones de tiempo no se pudo implementar la colecciones de páginas recibidas y para envío que deberían compartir los routeres con sus máquinas por lo tanto se les envía las páginas creadas desde adminsuistrador, 
 	total_pag++;
 }
 
@@ -51,9 +50,9 @@ void Administrador::simular_un_paso(){//recorrer la lista de routers y ejecutar 
 	
 	if(cant_pasos == 0){//Si este es el primer paso de simulación
 		this->calcular_tablas();
-		int bandera=cant_comp_por_router*cant_routers; 
+		int bandera=cant_routers;
 		while(bandera==0){
-			this->crear_pagina();//Se crearán tantas páginas como computadoras tiene el sistema.
+			this->crear_pagina();//Se crearán tantas páginas como routers tiene el sistema.
 			bandera--;
 		}
 	}
@@ -63,7 +62,7 @@ void Administrador::simular_un_paso(){//recorrer la lista de routers y ejecutar 
 	if((cant_pasos % 30) == 0){//Cada 30 pasos de simulación se recalculan las tablas de enrutamiento.
 		int nvo_peso;		
 		for(int i=0;i<arcos.tamanio();i++){
-			nvo_peso=arcos_originales.elemento_pos(i).peso()/routers.elemento_pos(arcos_originales.elemento_pos(i).destino()).total_paquetes();
+			nvo_peso=routers.elemento_pos(conexiones.elemento_pos(i).destino()).total_paquetes()/conexiones.elemento_pos(i).peso();
 			arcos.elemento_pos(i).mod_peso(nvo_peso);
 		}
 		this->calcular_tablas();
@@ -78,9 +77,9 @@ void Administrador::simular_un_paso(){//recorrer la lista de routers y ejecutar 
 }
 
 Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
-	Lista<int> S();
-	Lista<int> Q();
-	Lista<Etiqueta> etiquetas(); 
+	Lista<int> S;
+	Lista<int> Q;
+	Lista<Etiqueta> etiquetas; 
 //------------INICIALIZACIÓN-------------------------------------
 	for(int i=0; i<cant_routers;i++){
 		if(i==nodo_inicio){
@@ -132,7 +131,7 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 
 void Administrador::calcular_tablas(){
 	for(int i=0; i<cant_routers; i++){
-		routers.elemento_pos(i).actualizar_tabla(Dijkstra(i));
+		routers.elemento_pos(i).actualizar_tabla(this->Dijkstra(i));
 	}
 }
 
@@ -159,7 +158,7 @@ void Administrador::leer_archivo(){
 		break;
 		case('*'):
 		{
-			linea.erase(line.begin());
+			linea.erase(linea.begin());
 			std::istringstream iss(linea);
 			int nro;
 			if (!(iss >> nro)) { 
@@ -171,9 +170,9 @@ void Administrador::leer_archivo(){
 				for(int j=0; j<cant_comp_por_router; j++){
 					int arreglo[]={i,j};
 					vector<int> ip_comp_i_j(arreglo,arreglo+sizeof(arreglo)/sizeof(arreglo[0]));
-					Router *ptr_router_i=&routers.elemento_pos(i);//puntero al router de la posicion i de la lista de routers de la red.
+					//Router* ptr_router_i=&routers.elemento_pos(i);//puntero al router de la posicion i de la lista de routers de la red.
 					
-					Computadora computadora_i_j(ip_comp_i_j,ptr_router);
+					Computadora computadora_i_j(ip_comp_i_j);
 					Computadora *ptr_comp_i_j = &computadora_i_j;//puntero a la computadora recien creada
 					computadoras.agregar(ptr_comp_i_j);//se agrega el puntero de la computadora recien creada a la lista de computadoras de la red.
 					routers.elemento_pos(i).agregar_computadora(ptr_comp_i_j);//se agrega la computadora a la lista de punteros a computadoras del router al que pertenece.
@@ -183,7 +182,7 @@ void Administrador::leer_archivo(){
 		break;
 		case('@'):
 		{
-			linea.erase(line.begin());
+			linea.erase(linea.begin());
 			std::istringstream iss(linea);
 			int origen, destino, ancho_banda;
 			if (!(iss >> origen >> destino >> ancho_banda)) { 
@@ -203,24 +202,6 @@ void Administrador::leer_archivo(){
 		}
 	}
 }
-
-/*
-void Administrador::crear_conexiones(){
-	for(int i=0; i<arcos.tamanio(); i++){
-		Conexion nva_conexion(arcos.elemento_pos(i).origen(), arcos.elemento_pos(i).destino(), arcos_originales.elemento_pos(i).peso());
-		bool existe=false;
-
-//Aparece el inconveniente de que si dos arcos con los mismos terminales tienen distinto peso se generará una única conexión con
-//el ancho de banda del primer arco analizado. OJO! 
-		for(int m=0; m<conexiones.tamanio(); m++){
-			if(nva_conexion.terminales()==conexiones.elemento_pos(m).terminales())
-			existe=true;
-		}
-		if(!existe){
-			conexiones.agregar(nva_conexion);
-		}
-	}
-}*/
 
 int Administrador::dibujar_grafo(){
 	
@@ -251,7 +232,7 @@ int Administrador::dibujar_grafo(){
 	
 	
 	flujo_salida.open(nombre_archivo);
-	flujo_salida<<"graph G \{"<<endl;
+	flujo_salida<<"digraph G \{"<<endl;
 	flujo_salida<<"graph [splines = ortho];"<<endl;
 	for(int i=0; i<cant_routers;i++){
 		for(int j=0; j<cant_comp_por_router;j++){

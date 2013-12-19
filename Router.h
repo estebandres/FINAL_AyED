@@ -7,6 +7,7 @@
 #include "Etiqueta.h"
 #include "Pagina.h"
 #include "Conexion.h"
+#include "Paquete.h"
 
 using namespace std;
 
@@ -41,7 +42,7 @@ class Router
 		void agregar_conexion_recepcion(Conexion*);
 		int obtener_ip();
 		int total_paquetes();
-		int actualizar_tabla(Lista<Etiqueta>);
+		void actualizar_tabla(Lista<Etiqueta>);
 		void agregar_computadora(Computadora*);
 };
 

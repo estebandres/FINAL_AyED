@@ -97,6 +97,7 @@ void Router::agregar_conexion_recepcion(Conexion* con){
 }
 
 int Router::obtener_ip(){
+	this->computadoras.tamanio();
 	return this->ip;
 }
 
@@ -104,10 +105,10 @@ int Router::total_paquetes(){
 	return this->organizador_paquetes.tamanio();
 }
 
-int Router::actualizar_tabla(Lista<Etiqueta> nva_tabla){
+void Router::actualizar_tabla(Lista<Etiqueta> nva_tabla){
 	this->tabla_enrutamiento=nva_tabla;
 }
 
-void agregar_computadora(Computadora* ptr_nva_comp){
-	this->computadoras.agregar(ptr_nva_comp);
+void Router::agregar_computadora(Computadora* esta){
+	computadoras.tamanio();
 }

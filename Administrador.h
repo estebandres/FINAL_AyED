@@ -1,8 +1,17 @@
 #ifndef ADMINISTRADOR_H
 #define ADMINISTRADOR_H
-#include <iostream>
-#include <string>
-#include "lista.h"
+//#include <iostream>
+//#include <string>
+#include <stdio.h>      /* printf, NULL */
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
+#include "Lista.h"
+#include "Etiqueta.h"
+#include "Paquete.h"
+#include "Conexion.h"
+#include "Pagina.h"
+#include "Router.h"
+#include "Computadora.h"
 
 using namespace std;
 /*
@@ -32,9 +41,10 @@ class Administrador
 		void simular_un_paso();
 		Lista<Etiqueta> Dijkstra(int);
 		void calcular_tablas();
-		void leer_archivo(string);
-		void crear_conexiones();
+		void leer_archivo();
+		//void crear_conexiones();
 		int dibujar_grafo();
+		void crear_pagina();
 };
 
 #endif // Paquete_H

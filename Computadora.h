@@ -1,6 +1,10 @@
 #ifndef COMPUTADORA_H
-#define CCOMPUTADORA_H
+#define COMPUTADORA_H
 #include <iostream>
+//#include "Router.h"
+#include "Lista.h"
+#include "Pagina.h"
+#include <vector>
 
 using namespace std;
 /*
@@ -12,15 +16,17 @@ que podrá ser usada para medir la eficiencia de la red.
 class Computadora
 {
 	private:
-		Router* router;//Puntero al router donde está conectada la máquina.
+		//Router* router;//Puntero al router donde está conectada la máquina.
 		vector<int> ip;
 		Lista<Pagina> paginas_recibidas;
 	public:		
-		Computadora(Router*, int);
+		//Computadora(Router*, int);
+		Computadora();
 		~Computadora();
-		void enviar_pagina(Pagina);
+		//void enviar_pagina(Pagina);
 		void recibir_pagina(Pagina);
 		int cant_pag_recibidas();
+		vector<int> obtener_ip();
 };
 
 #endif // COMPUTADORA_H

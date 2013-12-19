@@ -10,9 +10,9 @@ Es la entidad que conecta dos nodos o vértices y que se le asigna un peso o dis
 class Arco
 {
 	private:
-		int oringen;		
-		int destino;		
-		int peso;
+		int nodo_origen;		
+		int nodo_destino;		
+		int peso_arco;
 	public:		
 		Arco(int , int, int);
 		~Arco();

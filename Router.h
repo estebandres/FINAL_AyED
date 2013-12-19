@@ -1,8 +1,14 @@
 #ifndef ROUTER_H
 #define ROUTER_H
 #include <iostream>
-
+#include "Lista.h"
+#include "Biblioteca_paquetes.h"
+#include "Etiqueta.h"
+#include "Pagina.h"
+#include "Conexion.h"
+#include "Computadora.h"
 using namespace std;
+
 /*
 Esta clase representa los nodos de la red y opera como enrutador, tiene las funcionalidades de
 enviar y recibir paquetes así como recibi páginas completas desde las computadoras que están conectadas a este router.
@@ -21,7 +27,7 @@ class Router
 		Router(int);
 		~Router();		
 		//Router(int, Lista<*Computadora>, Lista<Etiqueta>, Lista<Conexion>);
-		void recibir_pagina(Pagina pagina_recibida);
+		void recibir_pagina(Pagina);
 		void recibir_paquetes();
 		void leer_conexiones();
 		void enviar_paquetes();
@@ -35,4 +41,3 @@ class Router
 };
 
 #endif // Paquete_H
-

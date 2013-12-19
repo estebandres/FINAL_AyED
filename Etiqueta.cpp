@@ -7,13 +7,13 @@ Etiqueta::Etiqueta(int router_destino, int router_despacho, int peso_trayecto){
 }
 Etiqueta::~Etiqueta(){
 }
-int Etiqueta::router_despacho(){
+int Etiqueta::despacho(){
 	return this->router_despacho;
 }
 int Etiqueta::destino(){
 	return this->router_destino;
 }
-int Etiqueta::peso_trayecto(){
+int Etiqueta::peso_total(){
 	return this->peso_trayecto;
 }
 void Etiqueta::mod_peso_trayecto(int nvo_peso){

@@ -28,13 +28,13 @@ void Administrador::crear_pagina(){
 	srand(time(0));
 	int i = rand() % (cant_comp_por_router+1);
 	int j = rand() % (cant_routers+1);
-	int arreglo[2]={i,j};
-	vector<int> ip_comp_origen(arreglo,arreglo+sizeof(arreglo)/sizeof(arreglo[0]));
+	int arreglo1[2]={i,j};
+	vector<int> ip_comp_origen(arreglo1,arreglo1+sizeof(arreglo1)/sizeof(arreglo1[0]));
 	srand(time(0));
 	int k = rand() % (cant_comp_por_router+1);
 	int l = rand() % (cant_routers+1);
-	int arreglo[2]={k,l};
-	vector<int> ip_comp_destino(arreglo,arreglo+sizeof(arreglo)/sizeof(arreglo[0]));
+	int arreglo2[2]={k,l};
+	vector<int> ip_comp_destino(arreglo2,arreglo2+sizeof(arreglo2)/sizeof(arreglo2[0]));
 	Pagina nva_pag(total_pag, rand()%(TAM_MAX_PAG+1-TAM_MIN_PAG)+TAM_MIN_PAG, ip_comp_origen, ip_comp_destino);
 	//*computadoras.elemento_pos( cant_comp_por_router * cant_routers-1).enviar_pagina(nva_pag);//Ojo revisar si se envia desde la máquina correcta.
 	srand(time(0));
@@ -80,10 +80,10 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 //------------INICIALIZACIÓN-------------------------------------
 	for(int i=0; i<cant_routers;i++){
 		if(i==nodo_inicio){
-			etiquetas.agregar(new Etiqueta(i,-1,0));
+			etiquetas.agregar(Etiqueta(i,-1,0));
 		}
 		else{
-			etiquetas.agregar(new Etiqueta(i,-1,INF));
+			etiquetas.agregar(Etiqueta(i,-1,INF));
 		}
 		Q.agregar(i);
 	}
@@ -108,7 +108,7 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 		Etiqueta etiqueta_vieja;
 		for(int k=0;k<arcos.tamanio();k++){//para cada uno de los arcos del grafo.
 			arco_actual=arcos.elemento_pos(k);
-			peso_tray_nvo=etiquetas.elemento_pos(nodo_prox).peso_trayecto()+arco_actual.peso();
+			peso_tray_nvo=etiquetas.elemento_pos(nodo_prox).peso_total()+arco_actual.peso();
 			etiqueta_vieja = etiquetas.elemento_pos(arco_actual.destino())
 			if(arco_actual.origen()==nodo_prox){//Si el arco tiene como orígen el nodo que estamos analizando. Osea corroboro sobre los que son adyancentes al nodo_prox.
 				if(!S.contiene(arco_actual.destino())){//Si el destino de ese arco está dentro de los nodos calculados.

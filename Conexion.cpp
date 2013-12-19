@@ -1,6 +1,6 @@
 #include "Conexion.h"
 
-Conexion::Conexion(int origen, int destino, int ancho) : Arco(origen, destino, ancho){
+Conexion::Conexion(int origen, int destino, int ancho) : Arco(origen, destino, ancho), canal(){
 	this->canal.fijar_tamanio_max(ancho);
 }
 
@@ -11,9 +11,9 @@ set<int> Conexion::obtener_terminales(){
 	return this->terminales;
 }*/
 
-void Conexion::cargar(Paquete){
+void Conexion::cargar(Paquete paq){
 	//assert(canal.cola_llena() && "Se intenta cargar una conexion que está saturada.");
-	this->canal.encolar(Paquete);
+	this->canal.encolar(paq);
 }
 
 Paquete Conexion::leer(){
@@ -28,7 +28,7 @@ bool Conexion::conexion_saturada(){
 }
 
 int Conexion::obtener_ancho_banda(){
-	return this->ancho_banda;
+	return this->peso();
 }
 
 bool Conexion::conexion_libre(){

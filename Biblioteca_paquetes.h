@@ -23,6 +23,7 @@ class Biblioteca_paquetes
 		int agregar_paquete(Paquete);
 		Paquete obtener_paquete();
 		void imprimir();
+		int tamanio();
 };
 
 #endif // Paquete_H

@@ -16,8 +16,9 @@ class Etiqueta
 	public:		
 		Etiqueta(int , int, int);
 		~Etiqueta();
-		int router_despacho();
-		int router_destino();
+		int despacho();
+		int destino();
+		int peso_total();
 		void mod_peso_trayecto(int);//modifica peso_trayecto
 		void mod_despacho(int);
 

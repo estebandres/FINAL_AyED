@@ -1,6 +1,6 @@
 #include "Biblioteca_paquetes.h"
-#include "Cola.h"
-#include "Paquete.h"
+//#include "Cola.h"
+//#include "Paquete.h"
 #include <iostream>
 using namespace std;
 
@@ -133,4 +133,15 @@ void Biblioteca_paquetes::imprimir(){
 			}
 		}
 	}
+}
+int Biblioteca_paquetes::tamanio(){
+	int tam=0;
+	for(int i=0;i<clasificador.tamanio();i++){
+		for(int j=0;j<clasificador.elemento_pos(i).tamanio();j++){
+			for(int k=0;k<clasificador.elemento_pos(i).elemento_pos(j).tamanio();k++){
+				tam++;
+			}
+		}
+	}
+	return tam;
 }

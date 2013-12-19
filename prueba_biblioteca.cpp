@@ -22,6 +22,7 @@ int main(){
 	cout<<"-----------------------------------------------------------"<<endl;
 	bltk1.imprimir();
 	cout<<"-----------------------------------------------------------"<<endl;
+	cout<<"TAMANIO TOTAL:"<<bltk1.tamanio()<<endl;
 	for(int m=0;m<27;m++){
 		bltk1.obtener_paquete().imprimir();
 	}

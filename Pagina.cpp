@@ -2,12 +2,7 @@
 
 using namespace std;
 
-Pagina::Pagina(int id, int tamanio, vector<int> ip_comp_origen, vector<int> ip_comp_destino){
-	this->id = id;
-	this->tamanio = tamanio;
-	this->ip_comp_origen = ip_comp_origen;
-	this->ip_comp_destino = ip_comp_destino;
-}
+Pagina::Pagina(int id, int tamanio, vector<int> ip_comp_origen, vector<int> ip_comp_destino):id(id),tamanio(tamanio),ip_comp_origen(ip_comp_origen),ip_comp_destino(ip_comp_destino){}
 
 Pagina::~Pagina()
 {}

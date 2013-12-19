@@ -1,12 +1,13 @@
 #ifndef ROUTER_H
 #define ROUTER_H
 #include <iostream>
+#include "Computadora.h"
 #include "Lista.h"
 #include "Biblioteca_paquetes.h"
 #include "Etiqueta.h"
 #include "Pagina.h"
 #include "Conexion.h"
-#include "Computadora.h"
+
 using namespace std;
 
 /*
@@ -38,6 +39,7 @@ class Router
 		void mostrar_paquetes();
 		void agregar_conexion_envio(Conexion*);
 		void agregar_conexion_recepcion(Conexion*);
+		int obtener_ip();
 };
 
 #endif // Paquete_H

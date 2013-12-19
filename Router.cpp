@@ -95,3 +95,7 @@ void Router::agregar_conexion_envio(Conexion* con){
 void Router::agregar_conexion_recepcion(Conexion* con){
 	this->conexiones_recepcion.agregar(con);
 }
+
+int Router::obtener_ip(){
+	return this->ip;
+}

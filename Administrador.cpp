@@ -74,9 +74,9 @@ void Administrador::simular_un_paso(){//recorrer la lista de routers y ejecutar 
 }
 
 Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
-	Lista<int> S;
-	Lista<int> Q;
-	Lista<Etiqueta> etiquetas; 
+	Lista<int> S();
+	Lista<int> Q();
+	Lista<Etiqueta> etiquetas(); 
 //------------INICIALIZACIÓN-------------------------------------
 	for(int i=0; i<cant_routers;i++){
 		if(i==nodo_inicio){
@@ -89,34 +89,35 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 	}
 //------------CICLO DE PROCESAMIENTO-------------------------------------
 	while(!Q.es_vacia()){
-		int nodo_prox;
+		int nodo_elegido;
 		int peso_tray_menor=INF;
 		int peso_tray_actual;
-		int i;
-		for(i=0; i<Q.tamanio(); i++){//Para todos las posiciones de la lista de etiquetas señecciono la de menor peso_trayecto.
-			peso_tray_actual=etiquetas.elemento_pos(Q.elemento_pos(i)).peso_trayecto();
+		int pos;
+		for(int i=0; i<Q.tamanio(); i++){//Para todos las posiciones de la lista de etiquetas señecciono la de menor peso_trayecto.
+			peso_tray_actual=etiquetas.elemento_pos(Q.elemento_pos(i)).peso_total();
 			if(peso_tray_actual<peso_tray_menor){
 				peso_tray_menor=peso_tray_actual;
-				nodo_prox=Q.elemento_pos(i);
+				nodo_elegido=Q.elemento_pos(i);
+				pos=i;
 			}
 		}
-		Q.quitar_nodo_pos(i);//Con esta acción corta el ciclo while
-		S.agregar(nodo_prox);
+		Q.quitar_nodo_pos(pos);//Con esta acción corta el ciclo while
+		S.agregar(nodo_elegido);
 		
-		Arco arco_actual;
+		Arco* arco_actual;
 		int peso_tray_nvo;
-		Etiqueta etiqueta_vieja;
+		Etiqueta* etiqueta_vieja;
 		for(int k=0;k<arcos.tamanio();k++){//para cada uno de los arcos del grafo.
-			arco_actual=arcos.elemento_pos(k);
-			peso_tray_nvo=etiquetas.elemento_pos(nodo_prox).peso_total()+arco_actual.peso();
-			etiqueta_vieja = etiquetas.elemento_pos(arco_actual.destino())
-			if(arco_actual.origen()==nodo_prox){//Si el arco tiene como orígen el nodo que estamos analizando. Osea corroboro sobre los que son adyancentes al nodo_prox.
-				if(!S.contiene(arco_actual.destino())){//Si el destino de ese arco está dentro de los nodos calculados.
-					if(etiqueta_vieja.peso_trayecto()>peso_tray_nvo){//Si el peso del trayecto de la etiqueta vieja es mayor que el peso del trayecto calculado.
-						etiqueta_vieja.mod_peso_trayecto(peso_tray_nvo);
+			arco_actual= &arcos.elemento_pos(k);
+			if(arco_actual->origen()==nodo_elegido){//Si el arco tiene como orígen el nodo que estamos analizando. Osea corroboro sobre los que son adyancentes al nodo_elegido.
+				if(!S.contiene(arco_actual->destino())){//Si el destino de ese arco NO está dentro de los nodos calculados.
+					etiqueta_vieja = & etiquetas.elemento_pos(arco_actual->destino());
+					peso_tray_nvo=etiquetas.elemento_pos(nodo_elegido).peso_total()+arco_actual->peso();
+					if(etiqueta_vieja->peso_total()>peso_tray_nvo){//Si el peso del trayecto de la etiqueta vieja es mayor que el peso del trayecto calculado.
+						etiqueta_vieja->mod_peso_trayecto(peso_tray_nvo);
 					}
-					if(etiqueta_vieja.router_despacho()==-1){//Si no se ha asignado el router de despacho a la etiqueta...
-						etiqueta_vieja.mod_despacho(etiquetas.elemento_pos(nodo_prox).router_despacho);//Se le asigna el router de despacho de su predecesor.
+					if(etiqueta_vieja->router_despacho()==-1 || etiqueta_vieja->router_despacho()==nodo_inicio){//Si no se ha asignado el router de despacho a la etiqueta...
+						etiqueta_vieja->mod_despacho(etiquetas.elemento_pos(nodo_elegido).router_despacho);//Se le asigna el router de despacho de su predecesor.
 					}
 				}
 			}
@@ -135,7 +136,8 @@ void Administrador::leer_archivo(string nombre_archivo){
 	string linea;
 	while(getline(archivo_conf, linea)){
 		switch(linea[0]){
-		case('#'){
+		case('#'):
+		{
 			linea.erase(line.begin());//borra el primer caracter de la línea, en este caso el símbolo #
 			std::istringstream iss(line);
 			int nro;

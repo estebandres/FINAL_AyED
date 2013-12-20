@@ -23,7 +23,7 @@ Administrador::~Administrador(){
 void Administrador::simular_cant_pasos(int cant_pasos){
 		this->cant_pasos=this->cant_pasos+cant_pasos;
 		for(int i=0; i<cant_pasos; i++){
-			this->simular_un_paso();
+			this->simular_un_paso(false);
 		}
 }
 
@@ -46,7 +46,7 @@ void Administrador::crear_pagina(){
 	total_pag++;
 }
 
-void Administrador::simular_un_paso(){//recorrer la lista de routers y ejecutar enviar y despues en otro ciclo recibir
+void Administrador::simular_un_paso(bool verbose){//recorrer la lista de routers y ejecutar enviar y despues en otro ciclo recibir
 	
 	if(cant_pasos == 0){//Si este es el primer paso de simulación
 		this->calcular_tablas();
@@ -59,7 +59,7 @@ void Administrador::simular_un_paso(){//recorrer la lista de routers y ejecutar 
 	if((cant_pasos % 5) == 0){//Cada 5 pasos de simulación se crea una página.
 		this->crear_pagina();
 	}
-	if((cant_pasos % 30) == 0){//Cada 30 pasos de simulación se recalculan las tablas de enrutamiento.
+	if((cant_pasos % 30) == 0){//Cada 30 pasos de simulación se recalculan las tablas de enrutamiento por lo que debe actualizarse el peso de todos los arcos.
 		int nvo_peso;		
 		for(int i=0;i<arcos.tamanio();i++){
 			nvo_peso=routers.elemento_pos(conexiones.elemento_pos(i).destino()).total_paquetes()/conexiones.elemento_pos(i).peso();
@@ -74,22 +74,30 @@ void Administrador::simular_un_paso(){//recorrer la lista de routers y ejecutar 
 	for(int i=0;i<routers.tamanio();i++){
 		routers.elemento_pos(i).recibir_paquetes();
 	}
+	if(verbose){
+		for(int i=0;i<routers.tamanio();i++){
+			routers.elemento_pos(i).mostrar_paquetes();
+		}
+	}
 }
 
 Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 	Lista<int> S;
 	Lista<int> Q;
-	Lista<Etiqueta> etiquetas; 
+	Lista<Etiqueta> etiquetas;
 //------------INICIALIZACIÓN-------------------------------------
 	for(int i=0; i<cant_routers;i++){
 		if(i==nodo_inicio){
-			etiquetas.agregar(Etiqueta(i,-1,0));
+			Etiqueta etiqueta(i,0);
+			etiquetas.agregar(etiqueta);
 		}
 		else{
-			etiquetas.agregar(Etiqueta(i,-1,INF));
+			Etiqueta etiqueta(i,INF);
+			etiquetas.agregar(etiqueta);
 		}
 		Q.agregar(i);
 	}
+	
 //------------CICLO DE PROCESAMIENTO-------------------------------------
 	while(!Q.es_vacia()){
 		int nodo_elegido;
@@ -98,6 +106,7 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 		int pos;
 		for(int i=0; i<Q.tamanio(); i++){//Para todos las posiciones de la lista de etiquetas señecciono la de menor peso_trayecto.
 			peso_tray_actual=etiquetas.elemento_pos(Q.elemento_pos(i)).peso_total();
+			cout<<peso_tray_actual<<endl;
 			if(peso_tray_actual<peso_tray_menor){
 				peso_tray_menor=peso_tray_actual;
 				nodo_elegido=Q.elemento_pos(i);
@@ -116,16 +125,20 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 				if(!S.contiene(arco_actual->destino())){//Si el destino de ese arco NO está dentro de los nodos calculados.
 					etiqueta_vieja = & etiquetas.elemento_pos(arco_actual->destino());
 					peso_tray_nvo=etiquetas.elemento_pos(nodo_elegido).peso_total()+arco_actual->peso();
+					//RELAJO - ACTUALIZO
 					if(etiqueta_vieja->peso_total()>peso_tray_nvo){//Si el peso del trayecto de la etiqueta vieja es mayor que el peso del trayecto calculado.
 						etiqueta_vieja->mod_peso_trayecto(peso_tray_nvo);
-					}
-					if(etiqueta_vieja->despacho()==-1 || etiqueta_vieja->despacho()==nodo_inicio){//Si no se ha asignado el router de despacho a la etiqueta...
-						etiqueta_vieja->mod_despacho(etiquetas.elemento_pos(nodo_elegido).despacho());//Se le asigna el router de despacho de su predecesor.
+						if(nodo_elegido!=nodo_inicio){
+							etiqueta_vieja->agregar_nodo(nodo_elegido);
+						}
 					}
 				}
 			}
 		}
 	}
+	cout<<"TABLA DE ENRUTAMIENTO R"<<nodo_inicio<<": "<<endl;
+	etiquetas.imprimir();
+	cout<<endl;
 	return etiquetas;
 }
 
@@ -191,10 +204,10 @@ void Administrador::leer_archivo(){
 			} // error
 			//int peso = ancho_banda/routers.elemento_pos(router_j).total_paquetes();//No tiene propósito hacer esto al iniciar la simulación ya que los routers no tienen paquetes que enviar.
 			Conexion nva_conexion(origen, destino, ancho_banda);
-			Conexion* ptr_conexion = &nva_conexion;
 			conexiones.agregar(nva_conexion);
-			routers.elemento_pos(ptr_conexion->origen()).agregar_conexion_envio(ptr_conexion);
-			routers.elemento_pos(ptr_conexion->destino()).agregar_conexion_recepcion(ptr_conexion);
+			Conexion* ptr_conexion = &nva_conexion;
+			routers.elemento_pos(ptr_conexion->origen()).agregar_conexion_envio(ptr_conexion);//El router que corresponde al orígen de la conexión va a cargar paquetes.
+			routers.elemento_pos(ptr_conexion->destino()).agregar_conexion_recepcion(ptr_conexion);//El router que corresponde al destino de la conexión va a leer los paquetes cargados en el canal.
 			Arco nvo_arco(origen, destino, ancho_banda);
 			arcos.agregar(nvo_arco);
 		}
@@ -295,4 +308,16 @@ int Administrador::dibujar_grafo(){
 		}
 	}
 	return 0;
+}
+
+void Administrador::prueba_carga(){
+	routers.imprimir();
+	for(int j=0;j<computadoras.tamanio();j++){
+		cout<<"COMPUTADORA: ("<<computadoras.elemento_pos(j)->obtener_ip()[0]<<"|"<<computadoras.elemento_pos(j)->obtener_ip()[1]<<")"<<endl;
+	}
+	cout<<"ARCOS:"<<endl;
+	arcos.imprimir();
+	cout<<"CONEXIONES:"<<endl;
+	conexiones.imprimir();
+	
 }

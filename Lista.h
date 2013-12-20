@@ -215,7 +215,7 @@ void Lista<T>::mostrar(void) {
 template <typename T>
 void Lista<T>::imprimir(void) {
 
-    cout << "-----------------------------------------------------"<<endl;
+    cout <<endl<< "-----------------------------------------------------"<<endl;
 
     Nodo* ptr_nodo_actual = inicio;
 

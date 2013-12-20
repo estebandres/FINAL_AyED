@@ -44,6 +44,7 @@ class Router
 		int total_paquetes();
 		void actualizar_tabla(Lista<Etiqueta>);
 		void agregar_computadora(Computadora*);
+		void imprimir();
 };
 
 #endif // Paquete_H

@@ -112,3 +112,19 @@ void Router::actualizar_tabla(Lista<Etiqueta> nva_tabla){
 void Router::agregar_computadora(Computadora* esta){
 	computadoras.tamanio();
 }
+void Router::imprimir(){
+	cout<<"ROUTER: "<<this->ip<<endl;
+	for(int i=0;i<computadoras.tamanio();i++){
+		cout<<"COMPUTADORA: ("<<computadoras.elemento_pos(i)->obtener_ip()[0]<<"|"<<computadoras.elemento_pos(i)->obtener_ip()[1]<<")"<<endl;
+	}
+	for(int j=0;j<conexiones_recepcion.tamanio();j++){
+		cout<<"CONEXIONES_RECEPCION: "<<endl;
+		conexiones_recepcion.elemento_pos(j)->imprimir();
+		cout<<endl;
+	}
+	for(int m=0;m<conexiones_recepcion.tamanio();m++){
+		cout<<"CONEXIONES_ENVIO: "<<endl;
+		conexiones_envio.elemento_pos(m)->imprimir();
+		cout<<endl;
+	}
+}

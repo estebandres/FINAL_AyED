@@ -20,6 +20,7 @@ class Arco
 		int destino();
 		int peso();
 		void mod_peso(int);//modifica el valor del peso del Arco.
+		void imprimir();
 };
 
 #endif // ARCO_H

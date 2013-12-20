@@ -38,13 +38,14 @@ class Administrador
 		Administrador();
 		~Administrador();
 		void simular_cant_pasos(int);
-		void simular_un_paso();
+		void simular_un_paso(bool);
 		Lista<Etiqueta> Dijkstra(int);
 		void calcular_tablas();
 		void leer_archivo();
 		//void crear_conexiones();
 		int dibujar_grafo();
 		void crear_pagina();
+		void prueba_carga();
 };
 
 #endif // Paquete_H

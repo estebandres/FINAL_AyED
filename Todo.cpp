@@ -380,12 +380,15 @@ bool Lista<T>::contiene(T elemento){
 	Nodo* ptr_nodo_actual = inicio;
 
     while (ptr_nodo_actual != NULL) {
+		//cout<<"CONTIENE: "<<ptr_nodo_actual->elemento<<" == "<<elemento<<endl;
 		if(ptr_nodo_actual->elemento == elemento){
 			contenido=true;
+			//cout<<"CONTIENE_RES: "<<contenido<<endl;
 			return contenido;
 		}
 		ptr_nodo_actual = ptr_nodo_actual->siguiente;
 	}
+	//cout<<"CONTIENE_RES: "<<contenido<<endl;
 	return contenido;
 }
 
@@ -671,6 +674,7 @@ class Etiqueta
 		void imprimir();
 		void agregar_nodo(int);
 		Lista<int> obtener_camino();
+		void corregir(int);
 
 };
 
@@ -709,6 +713,9 @@ void Etiqueta::agregar_nodo(int nodo){
 		this->camino.quitar_ultimo_nodo();
 		this->camino.agregar(nodo);
 		this->camino.agregar(this->router_destino);
+}
+void Etiqueta::corregir(int nodo){
+	this->camino.insertar_al_principio(nodo);
 }
 Lista<int> Etiqueta::obtener_camino(){
 	return this->camino;
@@ -846,12 +853,13 @@ int Biblioteca_paquetes::agregar_paquete(Paquete paq_recibido){
 	bool hay_cat_router=false;
 	bool hay_cat_pagina=false;
 	int i,j;
-	cout<<"-----------------------------------------------------"<<endl;
-	cout<<"TAMANIO: "<<clasificador.tamanio()<<endl;
 	int router_destino = paq_recibido.obtener_ip_comp_destino()[0];
+	/*cout<<"-----------------------------------------------------"<<endl;
+	cout<<"TAMANIO: "<<clasificador.tamanio()<<endl;
+	
 	cout<<"ROUTER DESTINO: "<<router_destino<<endl;;
 	cout<<"PAGINA DESTINO: "<<paq_recibido.obtener_id_pagina()<<endl;
-	cout<<"------------------------------------------------------"<<endl;
+	cout<<"------------------------------------------------------"<<endl;*/
 	if(clasificador.tamanio()>0){//Si el clasificador no está vacío.
 		//cout<<"El clasificador no está vacío"<<endl;
 		for(i=0 ; i<clasificador.tamanio() ; i++){
@@ -1181,13 +1189,20 @@ void Administrador::simular_cant_pasos(int cant_pasos){
 void Administrador::crear_pagina(){
 //Cada cierta cantidad de pasos de simulacion (5) se generaran paginas aleatorioas de compuatadoras aleatorias.
 //
-	srand(time(0));
+	unsigned int seed;
+	FILE* urandom = fopen("/dev/urandom", "r");
+	fread(&seed, sizeof(int), 1, urandom);
+	fclose(urandom);
+	srand(seed);
+	//srand(time(0));
 	int i = rand() % (cant_routers+1);
+	//srand(time(0));
 	int j = rand() % (cant_comp_por_router+1);//el +1 vá por definición de rand().
 	int arreglo1[2]={i,j};
 	vector<int> ip_comp_origen(arreglo1,arreglo1+sizeof(arreglo1)/sizeof(arreglo1[0]));
 	srand(time(0));
 	int k = rand() % (cant_routers+1);
+	//srand(time(0));
 	int l = rand() % (cant_comp_por_router+1);
 	int arreglo2[2]={k,l};
 	vector<int> ip_comp_destino(arreglo2,arreglo2+sizeof(arreglo2)/sizeof(arreglo2[0]));
@@ -1204,8 +1219,11 @@ void Administrador::simular_un_paso(bool verbose){//recorrer la lista de routers
 	cout<<BOLD_RED "PASO DE SIMULACION NRO: " ANSI_COLOR_RESET<<cant_pasos<<endl<<endl;
 	if(cant_pasos == 1){//Si este es el primer paso de simulación
 		this->calcular_tablas();
+		cout<<"Estoy en el if"<<endl;
 		int bandera=cant_routers;
-		while(bandera==0){
+		cout<<"El valor de bandera es: "<<bandera<<endl;
+		while(bandera>=0){
+			cout<<"Estoy en el while"<<endl;
 			this->crear_pagina();//Se crearán tantas páginas como routers tiene el sistema.
 			bandera--;
 		}
@@ -1224,12 +1242,13 @@ void Administrador::simular_un_paso(bool verbose){//recorrer la lista de routers
 		}
 		this->calcular_tablas();
 	}
-
-	for(int i=0;i<routers.tamanio();i++){
-		routers.elemento_pos(i).enviar_paquetes();
-	}
+	cout<<"Tamanio de Routers"<<routers.tamanio()<<endl;
 	for(int i=0;i<routers.tamanio();i++){
 		routers.elemento_pos(i).recibir_paquetes();
+	}
+	
+	for(int i=0;i<routers.tamanio();i++){
+		routers.elemento_pos(i).enviar_paquetes();
 	}
 	if(verbose){
 		for(int i=0;i<routers.tamanio();i++){
@@ -1243,6 +1262,7 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 	Lista<int> S;
 	Lista<int> Q;
 	Lista<Etiqueta> etiquetas;
+	Lista<int> adyacentes;
 //------------INICIALIZACIÓN-------------------------------------
 	for(int i=0; i<cant_routers;i++){
 		if(i==nodo_inicio){
@@ -1255,6 +1275,11 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 		}
 		Q.agregar(i);
 	}
+	for(int j=0;j<arcos.tamanio();j++){
+		if(arcos.elemento_pos(j).origen()==nodo_inicio){
+			adyacentes.agregar(arcos.elemento_pos(j).destino());
+		}
+	}
 	
 //------------CICLO DE PROCESAMIENTO-------------------------------------
 	while(!Q.es_vacia()){
@@ -1264,13 +1289,15 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 		int pos;
 		for(int i=0; i<Q.tamanio(); i++){//Para todos las posiciones de la lista de etiquetas señecciono la de menor peso_trayecto.
 			peso_tray_actual=etiquetas.elemento_pos(Q.elemento_pos(i)).peso_total();
-			cout<<peso_tray_actual<<endl;
+			//cout<<peso_tray_actual<<endl;
 			if(peso_tray_actual<peso_tray_menor){
 				peso_tray_menor=peso_tray_actual;
 				nodo_elegido=Q.elemento_pos(i);
 				pos=i;
 			}
 		}
+		Q.mostrar();
+		S.mostrar();
 		Q.quitar_nodo_pos(pos);//Con esta acción corta el ciclo while
 		S.agregar(nodo_elegido);
 		
@@ -1294,7 +1321,23 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 			}
 		}
 	}
+	
+	bool todos_adyacentes=false;
+	while(!todos_adyacentes){
+		todos_adyacentes=true;
+		for(int m=1;m<etiquetas.tamanio();m++){
+			if(!adyacentes.contiene(etiquetas.elemento_pos(m).despacho())){
+				etiquetas.elemento_pos(m).corregir(etiquetas.elemento_pos(etiquetas.elemento_pos(m).despacho()).despacho());
+			}
+			cout<<"Adyacentes contiene a "<<etiquetas.elemento_pos(m).despacho()<<"?? --->"<<adyacentes.contiene(etiquetas.elemento_pos(m).despacho())<<endl;
+			todos_adyacentes=todos_adyacentes && adyacentes.contiene(etiquetas.elemento_pos(m).despacho());
+			cout<<"LA PRODUCTORIA: "<<todos_adyacentes<<endl;
+		}
+		
+	}
 	cout<<"TABLA DE ENRUTAMIENTO R"<<nodo_inicio<<": "<<endl;
+	for(int i=0;i<etiquetas.tamanio();i++)
+		etiquetas.elemento_pos(i).obtener_camino().mostrar();
 	etiquetas.imprimir();
 	cout<<endl;
 	return etiquetas;
@@ -1407,7 +1450,7 @@ int Administrador::dibujar_grafo(){
 	
 	flujo_salida.open(nombre_archivo);
 	flujo_salida<<"digraph G \{"<<endl;
-	flujo_salida<<"graph [splines = ortho];"<<endl;
+	//flujo_salida<<"graph [splines = ortho];"<<endl;
 	for(int i=0; i<cant_routers;i++){
 		for(int j=0; j<cant_comp_por_router;j++){
 		flujo_salida<<i<<" -> m"<<i<<j<<";"<<endl;

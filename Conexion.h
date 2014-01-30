@@ -3,8 +3,8 @@
 #include <iostream>
 #include "Arco.h"
 #include "Cola.h"
-//#include "Paquete.h"
-class Paquete;
+#include "Paquete.h"
+
 using namespace std;
 /*
 Esta clase representa el arco de el grafo que ilustra la red a simular.

@@ -82,7 +82,7 @@ Etiqueta Router::buscar_en_tabla(Paquete paq){
 
 void Router::mostrar_paquetes(){
 	cout<<BOLD_GREEN "-----------------------------------------------------------------------------" ANSI_COLOR_RESET<<endl;
-	cout << BOLD_RED "R"<<this->ip<<":"<< BOLD_BLUE "LISTA DE PAQUETES" ANSI_COLOR_RESET<<endl;
+	cout << BOLD_RED "R"<<this->ip<<":"<< BOLD_BLUE "TOTAL DE PAQUETES: "<<this->organizador_paquetes.tamanio()<<ANSI_COLOR_RESET<<endl;
 	//cout<<"R"<<this->ip<<":"<<endl;
 	this->organizador_paquetes.imprimir();
 	cout<<BOLD_GREEN "-----------------------------------------------------------------------------" ANSI_COLOR_RESET<<endl;

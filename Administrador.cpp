@@ -310,7 +310,7 @@ int Administrador::dibujar_grafo(){
 	return 0;
 }
 
-void Administrador::prueba_carga(){
+void Administrador::probar_conf(){
 	routers.imprimir();
 	for(int j=0;j<computadoras.tamanio();j++){
 		cout<<"COMPUTADORA: ("<<computadoras.elemento_pos(j)->obtener_ip()[0]<<"|"<<computadoras.elemento_pos(j)->obtener_ip()[1]<<")"<<endl;

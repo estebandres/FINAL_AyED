@@ -45,7 +45,7 @@ class Administrador
 		//void crear_conexiones();
 		int dibujar_grafo();
 		void crear_pagina();
-		void prueba_carga();
+		void probar_conf();
 };
 
 #endif // Paquete_H

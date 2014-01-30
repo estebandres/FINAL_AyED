@@ -454,7 +454,7 @@ void Cola<T>::desencolar(){
 }
 
 template <typename T>
-void Cola<T>::reencolar(){
+void reencolar<Cola>::T(){
 	T primer_elem = Lista<T>::primer_elemento();	
 	Lista<T>::quitar_primer_nodo();
 	encolar(primer_elem);
@@ -660,11 +660,11 @@ class Etiqueta
 {
 	private:
 		int router_destino;		
-		//int router_despacho;		
+		int router_despacho;		
 		int peso_trayecto;
-		Lista<int> camino;
+		//Lista<int> camino;
 	public:		
-		Etiqueta(int, int);
+		Etiqueta(int, int, int);
 		~Etiqueta();
 		int despacho();
 		int destino();
@@ -672,27 +672,21 @@ class Etiqueta
 		void mod_peso_trayecto(int);//modifica peso_trayecto
 		void mod_despacho(int);
 		void imprimir();
-		void agregar_nodo(int);
-		Lista<int> obtener_camino();
-		void corregir(int);
+		//void agregar_nodo(int);
+		//Lista<int> obtener_camino();
+		//void corregir(int);
 
 };
 
-Etiqueta::Etiqueta(int router_destino, int peso_trayecto) : camino(){
+Etiqueta::Etiqueta(int router_destino, int router_despacho, int peso_trayecto){
 	this->router_destino=router_destino;
-	this->camino.agregar(this->router_destino);
 	//this->router_despacho=router_despacho;//router al que se debe despachar los paquetes que tienen como destino el router_destino;
 	this->peso_trayecto=peso_trayecto;
 }
 Etiqueta::~Etiqueta(){
 }
 int Etiqueta::despacho(){
-	if(this->camino.es_vacia()){
-		return -1;
-	}
-	else{
-		return this->camino.primer_elemento();
-	}
+	return this->router_despacho;
 }
 int Etiqueta::destino(){
 	return this->router_destino;
@@ -703,22 +697,11 @@ int Etiqueta::peso_total(){
 void Etiqueta::mod_peso_trayecto(int nvo_peso){
 	this->peso_trayecto = nvo_peso;
 }
-/*void Etiqueta::mod_despacho(int nvo_router_despacho){
+void Etiqueta::mod_despacho(int nvo_router_despacho){
 	this->router_despacho = nvo_router_despacho;
-}*/
+}
 void Etiqueta::imprimir(){
-	cout<<"["<<this->router_destino<<"|"<<this->despacho()<<"|"<<this->peso_trayecto<<"]";
-}
-void Etiqueta::agregar_nodo(int nodo){
-		this->camino.quitar_ultimo_nodo();
-		this->camino.agregar(nodo);
-		this->camino.agregar(this->router_destino);
-}
-void Etiqueta::corregir(int nodo){
-	this->camino.insertar_al_principio(nodo);
-}
-Lista<int> Etiqueta::obtener_camino(){
-	return this->camino;
+	cout<<"["<<this->router_destino<<"|"<<this->router_despacho<<"|"<<this->peso_trayecto<<"]";
 }
 
 
@@ -841,6 +824,8 @@ class Biblioteca_paquetes
 		Paquete obtener_paquete();
 		void imprimir();
 		int tamanio();
+		int destino_proa();
+		int hay_envios()
 };
 
 Biblioteca_paquetes::Biblioteca_paquetes(int mi_rout)
@@ -949,10 +934,13 @@ int Biblioteca_paquetes::agregar_paquete(Paquete paq_recibido){
 
 Paquete Biblioteca_paquetes::obtener_paquete(){
 	assert (clasificador.tamanio()>0 && "Se intenta obtener paquetes de la coleccion vacia");
+	cout<<"Hey1"<<endl;
 	if(clasificador.primer_elemento().obtener_duenio()==mi_router)//Si estoy en las paginas de mi router reencolo.
 		clasificador.reencolar();
+	cout<<"Hey2"<<endl;
 	Paquete paquete_envio = clasificador.primer_elemento().primer_elemento().primer_elemento();
 	clasificador.primer_elemento().primer_elemento().desencolar();
+	cout<<"Hey3"<<endl;
 	if(clasificador.primer_elemento().primer_elemento().es_vacia())//si la página no tiene más paquetes...
 		clasificador.primer_elemento().desencolar();//Desencolo la página para ese router.
 	else
@@ -975,6 +963,7 @@ void Biblioteca_paquetes::imprimir(){
 	}
 }
 int Biblioteca_paquetes::tamanio(){
+	if(this->clasificador.tamanio()==1 && )	
 	int tam=0;
 	for(int i=0;i<clasificador.tamanio();i++){
 		for(int j=0;j<clasificador.elemento_pos(i).tamanio();j++){
@@ -984,6 +973,21 @@ int Biblioteca_paquetes::tamanio(){
 		}
 	}
 	return tam;
+}
+
+int Biblioteca_paquetes::destino_proa(){
+	return clasificador.primer_elemento().duenio();
+}
+
+int Biblioteca_paquetes::reencolar_destino(){
+	this->clasificador.reencolar();
+}
+
+int Biblioteca_paquetes::hay_envios(){
+	if(this->clasificador.tamanio()==1 && this->destino_proa() == this->mi_router)
+		return 0
+	else
+		return this->clasificador.tamanio(); 
 }
 
 /*
@@ -1009,7 +1013,7 @@ class Router
 		void leer_conexiones();
 		void enviar_paquetes();
 		void cargar_conexiones();
-		Etiqueta buscar_en_tabla(Paquete);
+		int buscar_en_tabla(int);
 		void enviar_pagina(Pagina);
 		Pagina construir_pagina(Paquete);
 		void mostrar_paquetes();
@@ -1034,19 +1038,27 @@ void Router::recibir_pagina(Pagina pagina_recibida){
 }
 
 void Router::recibir_paquetes(){
+	//cout<<"Router::recibir_paquetes()"<<endl;
 	this->leer_conexiones();
 	
 }
 
 void Router::leer_conexiones(){
+	//cout<<"Router::leer_conexiones()"<<endl;
+	//cout<<"Soy el Router "<<this->ip<<" y tengo "<<conexiones_recepcion.tamanio()<<"conexiones de recepcion"<<endl;
 	for(int i=0; i<conexiones_recepcion.tamanio(); i++){
+		//cout<<"Hola1"<<endl;
+		//cout<<"conexion libre: "<<conexiones_recepcion.elemento_pos(i)->conexion_libre()<<endl;
 		while(!conexiones_recepcion.elemento_pos(i)->conexion_libre()){//Mientras que la conexión en la posición i de la lsita de conexiones no esté libre...
 			Paquete paq_leido=conexiones_recepcion.elemento_pos(i)->leer();//esta instruccion terminará por liberar la conexion y finalizar el while.
+			//cout<<"Hola2"<<endl;
 			bool pag_completa=this->organizador_paquetes.agregar_paquete(paq_leido);
+			//cout<<"Hola3"<<endl;
 			if(pag_completa){//si estan todos los paquetes de una página para este router
 				Pagina pag_construida = this->construir_pagina(paq_leido);//en la realidad la computadora se encarga de generar la pagina
 				this->enviar_pagina(pag_construida);
 			}
+			//cout<<"Hola4"<<endl;
 		}
 	}
 }
@@ -1069,22 +1081,29 @@ void Router::enviar_paquetes(){
 }
 void Router::cargar_conexiones(){//envia el mensaje pero no espera una respuesta de recepcion exitosa UTP!
 	bool conexiones_saturadas=false;
-	while(organizador_paquetes.tamanio()!=0 && !conexiones_saturadas){//mientras hayan paquetes en el organizador y las conexiones no esten sat 
-		Paquete paq_envio = this->organizador_paquetes.obtener_paquete();//aqui se puede vaciar el organizador_paquetes -->corta el while
-		int router_despacho=buscar_en_tabla(paq_envio).despacho();
-		conexiones_saturadas=true;//inicializa en verdadero asi permite hacer la operacion AND. 
-		for(int i=0; i<conexiones_envio.tamanio(); i++){//este ciclo recorre todas las conexiones del router en busca de aquella que lo conecta con el router de despacho para tal paquete paw_envio.
-			if(conexiones_envio.elemento_pos(i)->destino()==router_despacho)
-				conexiones_envio.elemento_pos(i)->cargar(paq_envio);
+	while(organizador_paquetes.hay_envios() && !conexiones_saturadas){//mientras hayan paquetes en el organizador para envío y las conexiones no esten saturadas 
+		//cout<<"Chau1"<<endl;
+		//Paquete paq_envio = this->organizador_paquetes.obtener_paquete();//aqui se puede vaciar el organizador_paquetes -->corta el while
+		//cout<<"Paquete:"<<endl;
+		//paq_envio.imprimir();
+		//int router_despacho=buscar_en_tabla(paq_envio).despacho();
+		conexiones_saturadas=true;//inicializa en verdadero asi permite hacer la operacion AND.
+		//cout<<"Chau2"<<endl;
+		for(int i=0; i<conexiones_envio.tamanio(); i++){//este ciclo recorre todas las conexiones del router en busca de aquella que lo conecta con el router de despacho para el paquete en la proa del organizador.
+			//cout<<"Chau3"<<endl;
+			if(conexiones_envio.elemento_pos(i)->destino() == this->buscar_en_tabla(organizador_paquetes.destino_proa()) && !conexiones_envio.elemento_pos(i)->conexion_saturada()){
+			//cout<<"Chau4"<<endl;
+					conexiones_envio.elemento_pos(i)->cargar(organizador.obtener_paquete());
+			}
 			conexiones_saturadas=conexiones_saturadas && conexiones_envio.elemento_pos(i)->conexion_saturada();//Aqui corta el while si las conexiones estan saturadas.
 		}	
 	}
 }
 
-Etiqueta Router::buscar_en_tabla(Paquete paq){
+int Router::buscar_en_tabla(int destino){
 	for(int i=0;i<tabla_enrutamiento.tamanio();i++){
-		if(tabla_enrutamiento.elemento_pos(i).destino() == paq.obtener_ip_comp_destino()[0])
-			return tabla_enrutamiento.elemento_pos(i);
+		if(tabla_enrutamiento.elemento_pos(i).destino() == destino)
+			return tabla_enrutamiento.elemento_pos(i).despacho();
 	}
 	assert(0 && "Router::buscar_en_tabla -> \"No se encontró la etiqueta para el destino del paquete.\"");
 }
@@ -1195,21 +1214,22 @@ void Administrador::crear_pagina(){
 	fclose(urandom);
 	srand(seed);
 	//srand(time(0));
-	int i = rand() % (cant_routers+1);
+	int i = rand() % (cant_routers);
 	//srand(time(0));
-	int j = rand() % (cant_comp_por_router+1);//el +1 vá por definición de rand().
+	int j = rand() % (cant_comp_por_router);//el +1 vá por definición de rand().
 	int arreglo1[2]={i,j};
 	vector<int> ip_comp_origen(arreglo1,arreglo1+sizeof(arreglo1)/sizeof(arreglo1[0]));
 	srand(time(0));
-	int k = rand() % (cant_routers+1);
+	int k = rand() % (cant_routers);
 	//srand(time(0));
-	int l = rand() % (cant_comp_por_router+1);
+	int l = rand() % (cant_comp_por_router);
 	int arreglo2[2]={k,l};
 	vector<int> ip_comp_destino(arreglo2,arreglo2+sizeof(arreglo2)/sizeof(arreglo2[0]));
 	Pagina nva_pag(total_pag, rand()%(TAM_MAX_PAG+1-TAM_MIN_PAG)+TAM_MIN_PAG, ip_comp_origen, ip_comp_destino);
 	cout<<"SE CREO UNA NUEVA PAGINA: "<<endl;
 	nva_pag.imprimir();
 	//Se envía la página creada al router que corresponde.
+	
 	routers.elemento_pos(i).recibir_pagina(nva_pag);//Por razones de tiempo no se pudo implementar la colecciones de páginas recibidas y para envío que deberían compartir los routeres con sus máquinas por lo tanto se les envía las páginas creadas desde adminsuistrador, 
 	total_pag++;
 }
@@ -1263,15 +1283,21 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 	Lista<int> Q;
 	Lista<Etiqueta> etiquetas;
 	Lista<int> adyacentes;
-//------------INICIALIZACIÓN-------------------------------------
+	//Lista<int> predecesores;
+	vector<int> predecesores(cant_routers);
+	cout<<predecesores[3]<<predecesores[5]<<endl;
+	
+//------------INICIALIZACIÓN-------------------------------------	
 	for(int i=0; i<cant_routers;i++){
 		if(i==nodo_inicio){
-			Etiqueta etiqueta(i,0);
+			Etiqueta etiqueta(i,0,0);
 			etiquetas.agregar(etiqueta);
+			predecesores[i]=nodo_inicio;			
 		}
 		else{
-			Etiqueta etiqueta(i,INF);
+			Etiqueta etiqueta(i,-1,INF);
 			etiquetas.agregar(etiqueta);
+			predecesores[i]=-1;
 		}
 		Q.agregar(i);
 	}
@@ -1296,8 +1322,8 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 				pos=i;
 			}
 		}
-		Q.mostrar();
-		S.mostrar();
+		//Q.mostrar();
+		//S.mostrar();
 		Q.quitar_nodo_pos(pos);//Con esta acción corta el ciclo while
 		S.agregar(nodo_elegido);
 		
@@ -1313,33 +1339,42 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 					//RELAJO - ACTUALIZO
 					if(etiqueta_vieja->peso_total()>peso_tray_nvo){//Si el peso del trayecto de la etiqueta vieja es mayor que el peso del trayecto calculado.
 						etiqueta_vieja->mod_peso_trayecto(peso_tray_nvo);
-						if(nodo_elegido!=nodo_inicio){
-							etiqueta_vieja->agregar_nodo(nodo_elegido);
-						}
+						//predecesores.insertar_nodo_pos(nodo_elegido, arco_actual->destino());
+						predecesores[arco_actual->destino()]=nodo_elegido;
 					}
 				}
 			}
 		}
 	}
 	
+	for(size_t i=0;i<predecesores.size();i++){
+		if(predecesores[i]==nodo_inicio)
+			predecesores[i]=i;
+	}
+	
 	bool todos_adyacentes=false;
 	while(!todos_adyacentes){
 		todos_adyacentes=true;
-		for(int m=1;m<etiquetas.tamanio();m++){
-			if(!adyacentes.contiene(etiquetas.elemento_pos(m).despacho())){
-				etiquetas.elemento_pos(m).corregir(etiquetas.elemento_pos(etiquetas.elemento_pos(m).despacho()).despacho());
+		for(size_t m=0;m<predecesores.size();m++){
+			if(predecesores[m]!=nodo_inicio){
+				if(!adyacentes.contiene(predecesores[m])){
+					//cout<<"Entre al if. Parece que"<<predecesores[m]<<"No es adyacente."<<endl;
+					predecesores[m]=predecesores[predecesores[m]];
+				}
+				//cin.get();
+				todos_adyacentes=todos_adyacentes && adyacentes.contiene(predecesores[m]);
+				//cout<<"LA PRODUCTORIA: "<<todos_adyacentes<<endl;
 			}
-			cout<<"Adyacentes contiene a "<<etiquetas.elemento_pos(m).despacho()<<"?? --->"<<adyacentes.contiene(etiquetas.elemento_pos(m).despacho())<<endl;
-			todos_adyacentes=todos_adyacentes && adyacentes.contiene(etiquetas.elemento_pos(m).despacho());
-			cout<<"LA PRODUCTORIA: "<<todos_adyacentes<<endl;
-		}
-		
+		}	
+	}
+	
+	for(int n=0;n<etiquetas.tamanio();n++){
+		etiquetas.elemento_pos(n).mod_despacho(predecesores[n]);
 	}
 	cout<<"TABLA DE ENRUTAMIENTO R"<<nodo_inicio<<": "<<endl;
-	for(int i=0;i<etiquetas.tamanio();i++)
-		etiquetas.elemento_pos(i).obtener_camino().mostrar();
+	//cin.get();
 	etiquetas.imprimir();
-	cout<<endl;
+		
 	return etiquetas;
 }
 

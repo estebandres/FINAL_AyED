@@ -454,7 +454,7 @@ void Cola<T>::desencolar(){
 }
 
 template <typename T>
-void reencolar<Cola>::T(){
+void Cola<T>::reencolar(){
 	T primer_elem = Lista<T>::primer_elemento();	
 	Lista<T>::quitar_primer_nodo();
 	encolar(primer_elem);
@@ -825,7 +825,8 @@ class Biblioteca_paquetes
 		void imprimir();
 		int tamanio();
 		int destino_proa();
-		int hay_envios()
+		int hay_envios();
+		void reencolar_destino();
 };
 
 Biblioteca_paquetes::Biblioteca_paquetes(int mi_rout)
@@ -962,8 +963,7 @@ void Biblioteca_paquetes::imprimir(){
 		}
 	}
 }
-int Biblioteca_paquetes::tamanio(){
-	if(this->clasificador.tamanio()==1 && )	
+int Biblioteca_paquetes::tamanio(){	
 	int tam=0;
 	for(int i=0;i<clasificador.tamanio();i++){
 		for(int j=0;j<clasificador.elemento_pos(i).tamanio();j++){
@@ -976,16 +976,16 @@ int Biblioteca_paquetes::tamanio(){
 }
 
 int Biblioteca_paquetes::destino_proa(){
-	return clasificador.primer_elemento().duenio();
+	return clasificador.primer_elemento().obtener_duenio();
 }
 
-int Biblioteca_paquetes::reencolar_destino(){
+void Biblioteca_paquetes::reencolar_destino(){
 	this->clasificador.reencolar();
 }
 
 int Biblioteca_paquetes::hay_envios(){
 	if(this->clasificador.tamanio()==1 && this->destino_proa() == this->mi_router)
-		return 0
+		return 0;
 	else
 		return this->clasificador.tamanio(); 
 }
@@ -1046,14 +1046,15 @@ void Router::recibir_paquetes(){
 void Router::leer_conexiones(){
 	//cout<<"Router::leer_conexiones()"<<endl;
 	//cout<<"Soy el Router "<<this->ip<<" y tengo "<<conexiones_recepcion.tamanio()<<"conexiones de recepcion"<<endl;
+	cout<<"***"<<conexiones_recepcion.tamanio()<<"***"<<endl;
 	for(int i=0; i<conexiones_recepcion.tamanio(); i++){
-		//cout<<"Hola1"<<endl;
-		//cout<<"conexion libre: "<<conexiones_recepcion.elemento_pos(i)->conexion_libre()<<endl;
+		cout<<"Hola1"<<endl;
+		cout<<"conexion nro:"<<i<<" libre?: "<<conexiones_recepcion.elemento_pos(i)->conexion_libre()<<endl;
 		while(!conexiones_recepcion.elemento_pos(i)->conexion_libre()){//Mientras que la conexión en la posición i de la lsita de conexiones no esté libre...
 			Paquete paq_leido=conexiones_recepcion.elemento_pos(i)->leer();//esta instruccion terminará por liberar la conexion y finalizar el while.
-			//cout<<"Hola2"<<endl;
+			cout<<"Hola2"<<endl;
 			bool pag_completa=this->organizador_paquetes.agregar_paquete(paq_leido);
-			//cout<<"Hola3"<<endl;
+			cout<<"Hola3"<<endl;
 			if(pag_completa){//si estan todos los paquetes de una página para este router
 				Pagina pag_construida = this->construir_pagina(paq_leido);//en la realidad la computadora se encarga de generar la pagina
 				this->enviar_pagina(pag_construida);
@@ -1082,25 +1083,34 @@ void Router::enviar_paquetes(){
 void Router::cargar_conexiones(){//envia el mensaje pero no espera una respuesta de recepcion exitosa UTP!
 	bool conexiones_saturadas=false;
 	while(organizador_paquetes.hay_envios() && !conexiones_saturadas){//mientras hayan paquetes en el organizador para envío y las conexiones no esten saturadas 
-		//cout<<"Chau1"<<endl;
+		cout<<"Chau1"<<endl;
 		//Paquete paq_envio = this->organizador_paquetes.obtener_paquete();//aqui se puede vaciar el organizador_paquetes -->corta el while
 		//cout<<"Paquete:"<<endl;
 		//paq_envio.imprimir();
 		//int router_despacho=buscar_en_tabla(paq_envio).despacho();
 		conexiones_saturadas=true;//inicializa en verdadero asi permite hacer la operacion AND.
-		//cout<<"Chau2"<<endl;
 		for(int i=0; i<conexiones_envio.tamanio(); i++){//este ciclo recorre todas las conexiones del router en busca de aquella que lo conecta con el router de despacho para el paquete en la proa del organizador.
 			//cout<<"Chau3"<<endl;
+			cout<<"Chau2"<<endl;
+			cout<<"Destino de PROA = "<<organizador_paquetes.destino_proa()<<endl;
+			if(organizador_paquetes.destino_proa()==this->ip)
+				organizador_paquetes.reencolar_destino();
+			cout<<"Chau3"<<endl;
+			cout<<"Envio para: "<<this->buscar_en_tabla(organizador_paquetes.destino_proa())<<endl;
+			cout<<"Conexión (destino): "<<conexiones_envio.elemento_pos(i)->destino()<< "--SAT?-- "<<conexiones_envio.elemento_pos(i)->conexion_saturada()<<endl;
 			if(conexiones_envio.elemento_pos(i)->destino() == this->buscar_en_tabla(organizador_paquetes.destino_proa()) && !conexiones_envio.elemento_pos(i)->conexion_saturada()){
-			//cout<<"Chau4"<<endl;
-					conexiones_envio.elemento_pos(i)->cargar(organizador.obtener_paquete());
+				cout<<"Chau4"<<endl;
+				conexiones_envio.elemento_pos(i)->cargar(organizador_paquetes.obtener_paquete());
 			}
 			conexiones_saturadas=conexiones_saturadas && conexiones_envio.elemento_pos(i)->conexion_saturada();//Aqui corta el while si las conexiones estan saturadas.
-		}	
+		}
 	}
 }
 
 int Router::buscar_en_tabla(int destino){
+	tabla_enrutamiento.imprimir();
+	cout<<"Tamanio de tabla: "<<tabla_enrutamiento.tamanio()<<endl;
+	tabla_enrutamiento.imprimir();
 	for(int i=0;i<tabla_enrutamiento.tamanio();i++){
 		if(tabla_enrutamiento.elemento_pos(i).destino() == destino)
 			return tabla_enrutamiento.elemento_pos(i).despacho();
@@ -1134,7 +1144,12 @@ int Router::total_paquetes(){
 }
 
 void Router::actualizar_tabla(Lista<Etiqueta> nva_tabla){
-	this->tabla_enrutamiento=nva_tabla;
+	Lista<Etiqueta> tabla = nva_tabla;
+	cout<<"000000000000000000000000000000000000000000"<<endl;
+	tabla.imprimir();
+	this->tabla_enrutamiento=tabla;
+	tabla_enrutamiento.imprimir();
+	cout<<"111111111111111111111111111111111111111111"<<endl;
 }
 
 void Router::agregar_computadora(Computadora esta){
@@ -1264,10 +1279,12 @@ void Administrador::simular_un_paso(bool verbose){//recorrer la lista de routers
 	}
 	cout<<"Tamanio de Routers"<<routers.tamanio()<<endl;
 	for(int i=0;i<routers.tamanio();i++){
+		cout<<"Recepcion del ROuter nro:"<<i<<endl;
 		routers.elemento_pos(i).recibir_paquetes();
 	}
-	
+	cout<<"Tamanio de Routers"<<routers.tamanio()<<endl;
 	for(int i=0;i<routers.tamanio();i++){
+		cout<<"Envio del ROuter nro:"<<i<<endl;
 		routers.elemento_pos(i).enviar_paquetes();
 	}
 	if(verbose){
@@ -1374,13 +1391,15 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 	cout<<"TABLA DE ENRUTAMIENTO R"<<nodo_inicio<<": "<<endl;
 	//cin.get();
 	etiquetas.imprimir();
-		
 	return etiquetas;
 }
 
 void Administrador::calcular_tablas(){
 	for(int i=0; i<cant_routers; i++){
-		routers.elemento_pos(i).actualizar_tabla(this->Dijkstra(i));
+		Lista<Etiqueta> tabla = this->Dijkstra(i);
+		cout<<"||||||||||||||||||||||||||||||||||||||"<<endl;
+		tabla.imprimir();
+		routers.elemento_pos(i).actualizar_tabla(tabla);
 	}
 }
 
@@ -1569,7 +1588,7 @@ int main(int argc, char **argv)
 	cin.get();
 	admin.leer_archivo();
 	admin.probar_conf();
-	admin.dibujar_grafo();
+	//admin.dibujar_grafo();
 	cout<<"Ingrese la cantidad de pasos a simular y presione ENTER. (Si se presiona enter sin especificar la cantidad de pasos se simulará un único paso.)"<<endl;
 	int comando=0;
 	while (true) {

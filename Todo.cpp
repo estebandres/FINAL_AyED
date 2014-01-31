@@ -15,13 +15,14 @@
 
 
 #define INF 9999
-#define TAM_MAX_PAG 25
-#define TAM_MIN_PAG 5
+#define TAM_MAX_PAG 6
+#define TAM_MIN_PAG 2
 
 
 #define BOLD_RED     "\x1b[31;1m"
 #define BOLD_BLUE    "\x1b[34;1m"
 #define BOLD_GREEN   "\x1b[32;1m"
+#define BOLD_CYAN    "\x1b[36;1m"
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
 #define ANSI_COLOR_YELLOW  "\x1b[33m"
@@ -106,8 +107,21 @@ public:
 	void quitar_nodo_pos(int);
 	void intercambiar_pos_nodos(int, int);
 	bool contiene(T);
+	void copiar_contenido(Lista<T>);
 
 };
+
+template <typename T>
+void Lista<T>::copiar_contenido(const Lista<T> fuente){
+	this->inicio=NULL;
+	this->final=NULL;
+	this->cant_nodos=0;
+	Nodo* ptr_nodo_actual = fuente.inicio;
+    while (ptr_nodo_actual != NULL) {
+        this->insertar_al_final(ptr_nodo_actual->elemento);
+        ptr_nodo_actual = ptr_nodo_actual->siguiente;
+    }
+}
 
 /*!Begin Snippet:copyconstructor*/
 // Copy constructor
@@ -545,7 +559,7 @@ int Paquete::obtener_tamanio_pagina(){
 
 void Paquete::imprimir(){
 	//cout<<"PAQUETE:"<<this->nro_orden<<" --> PÁGINA: "<<this->id_pagina<<endl;
-	cout<<"[PAG:"<<this->id_pagina<<",Ro:"<<this->ip_comp_origen[0]<<",Rd:"<<this->ip_comp_destino[0]<<",ORD:"<<this->nro_orden<<"]";
+	cout<<"[PAG:"<<this->id_pagina<<",Ro:"<<this->ip_comp_origen[0]<<",Rd:"<<this->ip_comp_destino[0]<<",ORD:"<<this->nro_orden<<"/"<<this->tamanio_pagina<<"]";
 }
 
 void Paquete::cambiar_orden(int nvo_nro_orden){
@@ -827,6 +841,7 @@ class Biblioteca_paquetes
 		int destino_proa();
 		int hay_envios();
 		void reencolar_destino();
+		int cant_destinos();
 };
 
 Biblioteca_paquetes::Biblioteca_paquetes(int mi_rout)
@@ -891,7 +906,7 @@ int Biblioteca_paquetes::agregar_paquete(Paquete paq_recibido){
 										aux=vec_des[l];
 										vec_des[l]=vec_des[m];
 										vec_des[m]=aux;
-										clasificador.elemento_pos(i).elemento_pos(j).intercambiar_pos_nodos(l,m);
+										//clasificador.elemento_pos(i).elemento_pos(j).intercambiar_pos_nodos(l,m);
 									}
 								}
 							}
@@ -935,13 +950,13 @@ int Biblioteca_paquetes::agregar_paquete(Paquete paq_recibido){
 
 Paquete Biblioteca_paquetes::obtener_paquete(){
 	assert (clasificador.tamanio()>0 && "Se intenta obtener paquetes de la coleccion vacia");
-	cout<<"Hey1"<<endl;
+	//cout<<"Hey1"<<endl;
 	if(clasificador.primer_elemento().obtener_duenio()==mi_router)//Si estoy en las paginas de mi router reencolo.
 		clasificador.reencolar();
-	cout<<"Hey2"<<endl;
+	//cout<<"Hey2"<<endl;
 	Paquete paquete_envio = clasificador.primer_elemento().primer_elemento().primer_elemento();
 	clasificador.primer_elemento().primer_elemento().desencolar();
-	cout<<"Hey3"<<endl;
+	//cout<<"Hey3"<<endl;
 	if(clasificador.primer_elemento().primer_elemento().es_vacia())//si la página no tiene más paquetes...
 		clasificador.primer_elemento().desencolar();//Desencolo la página para ese router.
 	else
@@ -983,11 +998,8 @@ void Biblioteca_paquetes::reencolar_destino(){
 	this->clasificador.reencolar();
 }
 
-int Biblioteca_paquetes::hay_envios(){
-	if(this->clasificador.tamanio()==1 && this->destino_proa() == this->mi_router)
-		return 0;
-	else
-		return this->clasificador.tamanio(); 
+int Biblioteca_paquetes::cant_destinos(){
+	return this->clasificador.tamanio();
 }
 
 /*
@@ -1040,23 +1052,23 @@ void Router::recibir_pagina(Pagina pagina_recibida){
 void Router::recibir_paquetes(){
 	//cout<<"Router::recibir_paquetes()"<<endl;
 	this->leer_conexiones();
-	
 }
 
 void Router::leer_conexiones(){
 	//cout<<"Router::leer_conexiones()"<<endl;
 	//cout<<"Soy el Router "<<this->ip<<" y tengo "<<conexiones_recepcion.tamanio()<<"conexiones de recepcion"<<endl;
-	cout<<"***"<<conexiones_recepcion.tamanio()<<"***"<<endl;
+	//cout<<"***"<<conexiones_recepcion.tamanio()<<"***"<<endl;
 	for(int i=0; i<conexiones_recepcion.tamanio(); i++){
-		cout<<"Hola1"<<endl;
-		cout<<"conexion nro:"<<i<<" libre?: "<<conexiones_recepcion.elemento_pos(i)->conexion_libre()<<endl;
+		//cout<<"Hola1"<<endl;
+		//cout<<"conexion nro:"<<i<<" libre?: "<<conexiones_recepcion.elemento_pos(i)->conexion_libre()<<endl;
 		while(!conexiones_recepcion.elemento_pos(i)->conexion_libre()){//Mientras que la conexión en la posición i de la lsita de conexiones no esté libre...
 			Paquete paq_leido=conexiones_recepcion.elemento_pos(i)->leer();//esta instruccion terminará por liberar la conexion y finalizar el while.
-			cout<<"Hola2"<<endl;
+			//cout<<"Hola2"<<endl;
 			bool pag_completa=this->organizador_paquetes.agregar_paquete(paq_leido);
-			cout<<"Hola3"<<endl;
+			//cout<<"Hola3"<<endl;
 			if(pag_completa){//si estan todos los paquetes de una página para este router
 				Pagina pag_construida = this->construir_pagina(paq_leido);//en la realidad la computadora se encarga de generar la pagina
+				//cout<<"PAGINA CONTRUIDA ID: "<<pag_construida.obtener_id()<<endl;
 				this->enviar_pagina(pag_construida);
 			}
 			//cout<<"Hola4"<<endl;
@@ -1080,37 +1092,46 @@ void Router::enviar_paquetes(){
 	this->cargar_conexiones();
 	
 }
-void Router::cargar_conexiones(){//envia el mensaje pero no espera una respuesta de recepcion exitosa UTP!
-	bool conexiones_saturadas=false;
-	while(organizador_paquetes.hay_envios() && !conexiones_saturadas){//mientras hayan paquetes en el organizador para envío y las conexiones no esten saturadas 
-		cout<<"Chau1"<<endl;
-		//Paquete paq_envio = this->organizador_paquetes.obtener_paquete();//aqui se puede vaciar el organizador_paquetes -->corta el while
-		//cout<<"Paquete:"<<endl;
-		//paq_envio.imprimir();
-		//int router_despacho=buscar_en_tabla(paq_envio).despacho();
-		conexiones_saturadas=true;//inicializa en verdadero asi permite hacer la operacion AND.
-		for(int i=0; i<conexiones_envio.tamanio(); i++){//este ciclo recorre todas las conexiones del router en busca de aquella que lo conecta con el router de despacho para el paquete en la proa del organizador.
-			//cout<<"Chau3"<<endl;
-			cout<<"Chau2"<<endl;
-			cout<<"Destino de PROA = "<<organizador_paquetes.destino_proa()<<endl;
-			if(organizador_paquetes.destino_proa()==this->ip)
-				organizador_paquetes.reencolar_destino();
-			cout<<"Chau3"<<endl;
-			cout<<"Envio para: "<<this->buscar_en_tabla(organizador_paquetes.destino_proa())<<endl;
-			cout<<"Conexión (destino): "<<conexiones_envio.elemento_pos(i)->destino()<< "--SAT?-- "<<conexiones_envio.elemento_pos(i)->conexion_saturada()<<endl;
-			if(conexiones_envio.elemento_pos(i)->destino() == this->buscar_en_tabla(organizador_paquetes.destino_proa()) && !conexiones_envio.elemento_pos(i)->conexion_saturada()){
-				cout<<"Chau4"<<endl;
-				conexiones_envio.elemento_pos(i)->cargar(organizador_paquetes.obtener_paquete());
-			}
-			conexiones_saturadas=conexiones_saturadas && conexiones_envio.elemento_pos(i)->conexion_saturada();//Aqui corta el while si las conexiones estan saturadas.
+
+void Router::cargar_conexiones(){
+	Lista<int> conexiones_saturadas;
+	bool carga_imposible=false;
+	int cant_rotaciones=0;
+	int despacho_req=-1;
+	while(organizador_paquetes.cant_destinos()>0 && conexiones_saturadas.tamanio()<conexiones_envio.tamanio() && !carga_imposible){//mientras hayan paquetes en el organizador para envío y las conexiones no esten saturadas 
+		despacho_req=this->buscar_en_tabla(this->organizador_paquetes.destino_proa());
+		//cout<<"ENVIO DESDE R"<<this->ip<<" DESTINO PROA: "<<organizador_paquetes.destino_proa()<<" DESPACHO:"<<despacho_req<<endl;
+		//this->tabla_enrutamiento.imprimir();
+		//cout<<"CONEXIONES SATURADAS: "<<endl;
+		//conexiones_saturadas.mostrar();
+		
+		if(conexiones_saturadas.contiene(despacho_req) || this->organizador_paquetes.destino_proa()==this->ip){
+			this->organizador_paquetes.reencolar_destino();
+			cant_rotaciones++;
 		}
+		else{
+			for(int i=0; i<conexiones_envio.tamanio(); i++){//este ciclo recorre todas las conexiones del router en busca de aquella que lo conecta con el router de despacho para el paquete en la proa del organizador.
+			//cout<<"Conexión (destino): "<<conexiones_envio.elemento_pos(i)->destino()<< "--SAT?-- "<<conexiones_envio.elemento_pos(i)->conexion_saturada()<<endl;
+				if(conexiones_envio.elemento_pos(i)->destino() == despacho_req){
+					//cout<<"Chau4"<<endl;
+					conexiones_envio.elemento_pos(i)->cargar(organizador_paquetes.obtener_paquete());
+					cant_rotaciones=0;
+					if(conexiones_envio.elemento_pos(i)->conexion_saturada()){
+						conexiones_saturadas.agregar(conexiones_envio.elemento_pos(i)->destino());
+					}
+				}
+			}
+		}
+		if(cant_rotaciones==organizador_paquetes.cant_destinos())
+			carga_imposible=true;
+		if(this->organizador_paquetes.tamanio()==1 && this->organizador_paquetes.destino_proa() == this->ip)
+			carga_imposible=true;
 	}
 }
 
 int Router::buscar_en_tabla(int destino){
-	tabla_enrutamiento.imprimir();
-	cout<<"Tamanio de tabla: "<<tabla_enrutamiento.tamanio()<<endl;
-	tabla_enrutamiento.imprimir();
+	//cout<<"Tamanio de tabla: "<<tabla_enrutamiento.tamanio()<<endl;
+	//tabla_enrutamiento.imprimir();
 	for(int i=0;i<tabla_enrutamiento.tamanio();i++){
 		if(tabla_enrutamiento.elemento_pos(i).destino() == destino)
 			return tabla_enrutamiento.elemento_pos(i).despacho();
@@ -1119,11 +1140,11 @@ int Router::buscar_en_tabla(int destino){
 }
 
 void Router::mostrar_paquetes(){
-	cout<<BOLD_GREEN "-----------------------------------------------------------------------------" ANSI_COLOR_RESET<<endl;
+	cout<<endl<<BOLD_GREEN "-----------------------------------------------------------------------------" ANSI_COLOR_RESET<<endl;
 	cout << BOLD_RED "R"<<this->ip<<":"<< BOLD_BLUE "TOTAL DE PAQUETES: "<<this->organizador_paquetes.tamanio()<<ANSI_COLOR_RESET<<endl;
 	//cout<<"R"<<this->ip<<":"<<endl;
-	this->organizador_paquetes.imprimir();
 	cout<<BOLD_GREEN "-----------------------------------------------------------------------------" ANSI_COLOR_RESET<<endl;
+	this->organizador_paquetes.imprimir();
 }
 
 void Router::agregar_conexion_envio(Conexion* con){
@@ -1144,12 +1165,12 @@ int Router::total_paquetes(){
 }
 
 void Router::actualizar_tabla(Lista<Etiqueta> nva_tabla){
-	Lista<Etiqueta> tabla = nva_tabla;
-	cout<<"000000000000000000000000000000000000000000"<<endl;
-	tabla.imprimir();
-	this->tabla_enrutamiento=tabla;
-	tabla_enrutamiento.imprimir();
-	cout<<"111111111111111111111111111111111111111111"<<endl;
+	//Lista<Etiqueta> tabla = nva_tabla;
+	//cout<<"000000000000000000000000000000000000000000"<<endl;
+	//nva_tabla.imprimir();
+	this->tabla_enrutamiento.copiar_contenido(nva_tabla);
+	//tabla_enrutamiento.imprimir();
+	//cout<<"111111111111111111111111111111111111111111"<<endl;
 }
 
 void Router::agregar_computadora(Computadora esta){
@@ -1234,13 +1255,14 @@ void Administrador::crear_pagina(){
 	int j = rand() % (cant_comp_por_router);//el +1 vá por definición de rand().
 	int arreglo1[2]={i,j};
 	vector<int> ip_comp_origen(arreglo1,arreglo1+sizeof(arreglo1)/sizeof(arreglo1[0]));
-	srand(time(0));
+	//srand(time(0));
 	int k = rand() % (cant_routers);
 	//srand(time(0));
 	int l = rand() % (cant_comp_por_router);
 	int arreglo2[2]={k,l};
 	vector<int> ip_comp_destino(arreglo2,arreglo2+sizeof(arreglo2)/sizeof(arreglo2[0]));
-	Pagina nva_pag(total_pag, rand()%(TAM_MAX_PAG+1-TAM_MIN_PAG)+TAM_MIN_PAG, ip_comp_origen, ip_comp_destino);
+	int tam_pag = rand() % ( (TAM_MAX_PAG+1) - TAM_MIN_PAG ) + TAM_MIN_PAG;//uso (TAM_MAX_PAG+1) así el rango de valores pseudoaleatorios incluye el nro TAM_MAX_PAG
+	Pagina nva_pag(total_pag, tam_pag, ip_comp_origen, ip_comp_destino);
 	cout<<"SE CREO UNA NUEVA PAGINA: "<<endl;
 	nva_pag.imprimir();
 	//Se envía la página creada al router que corresponde.
@@ -1254,13 +1276,17 @@ void Administrador::simular_un_paso(bool verbose){//recorrer la lista de routers
 	cout<<BOLD_RED "PASO DE SIMULACION NRO: " ANSI_COLOR_RESET<<cant_pasos<<endl<<endl;
 	if(cant_pasos == 1){//Si este es el primer paso de simulación
 		this->calcular_tablas();
-		cout<<"Estoy en el if"<<endl;
+		//cout<<"Estoy en el if"<<endl;
 		int bandera=cant_routers;
-		cout<<"El valor de bandera es: "<<bandera<<endl;
+		//cout<<"El valor de bandera es: "<<bandera<<endl;
 		while(bandera>=0){
-			cout<<"Estoy en el while"<<endl;
+			//cout<<"Estoy en el while"<<endl;
 			this->crear_pagina();//Se crearán tantas páginas como routers tiene el sistema.
 			bandera--;
+		}
+		cout<<endl<<BOLD_CYAN<<"-----------------------------------------------ESTADO INICIAL--------------------------------------------"<<ANSI_COLOR_RESET<<endl;
+		for(int i=0;i<routers.tamanio();i++){
+			routers.elemento_pos(i).mostrar_paquetes();
 		}
 	}
 	if((cant_pasos % 5) == 0){//Cada 5 pasos de simulación se crea una página.
@@ -1270,28 +1296,36 @@ void Administrador::simular_un_paso(bool verbose){//recorrer la lista de routers
 		cout<<BOLD_RED"PASARON "<<cant_pasos<<" PASOS DE SIMULACION"ANSI_COLOR_RESET<<endl;
 		int nvo_peso;		
 		for(int i=0;i<arcos.tamanio();i++){
-			nvo_peso=routers.elemento_pos(conexiones.elemento_pos(i)->destino()).total_paquetes()/conexiones.elemento_pos(i)->peso();
-			assert(nvo_peso>0 && "peso de arco negativo");
-			if(nvo_peso!=0)
+			nvo_peso=routers.elemento_pos(arcos.elemento_pos(i).destino()).total_paquetes()/conexiones.elemento_pos(i)->peso();
+			assert(nvo_peso>=0 && "peso de arco negativo");
+			if(nvo_peso>0)//Actualizará si y solo si el nvo_peso es mayor que cero
 				arcos.elemento_pos(i).mod_peso(nvo_peso);
+				
 		}
 		this->calcular_tablas();
 	}
-	cout<<"Tamanio de Routers"<<routers.tamanio()<<endl;
+	//cout<<"Tamanio de Routers"<<routers.tamanio()<<endl;
+	cout<<endl<<BOLD_CYAN<<"-----------------------------------------------RECEPCIÓN DE PAQUETES--------------------------------------------"<<ANSI_COLOR_RESET<<endl;
 	for(int i=0;i<routers.tamanio();i++){
-		cout<<"Recepcion del ROuter nro:"<<i<<endl;
+		//cout<<"Recepcion del ROuter nro:"<<i<<endl;
 		routers.elemento_pos(i).recibir_paquetes();
-	}
-	cout<<"Tamanio de Routers"<<routers.tamanio()<<endl;
-	for(int i=0;i<routers.tamanio();i++){
-		cout<<"Envio del ROuter nro:"<<i<<endl;
-		routers.elemento_pos(i).enviar_paquetes();
 	}
 	if(verbose){
 		for(int i=0;i<routers.tamanio();i++){
 			routers.elemento_pos(i).mostrar_paquetes();
 		}
 	}
+	//cout<<"Tamanio de Routers"<<routers.tamanio()<<endl;
+	cout<<endl<<BOLD_CYAN<<"-----------------------------------------------ENVÍO DE PAQUETES--------------------------------------------"<<ANSI_COLOR_RESET<<endl;
+	for(int i=0;i<routers.tamanio();i++){
+		//cout<<"Envio del ROuter nro:"<<i<<endl;
+		routers.elemento_pos(i).enviar_paquetes();
+	}
+	/*if(verbose){
+		for(int i=0;i<routers.tamanio();i++){
+			routers.elemento_pos(i).mostrar_paquetes();
+		}
+	}*/
 	this->cant_pasos++;
 }
 
@@ -1302,7 +1336,7 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 	Lista<int> adyacentes;
 	//Lista<int> predecesores;
 	vector<int> predecesores(cant_routers);
-	cout<<predecesores[3]<<predecesores[5]<<endl;
+	//cout<<predecesores[3]<<predecesores[5]<<endl;
 	
 //------------INICIALIZACIÓN-------------------------------------	
 	for(int i=0; i<cant_routers;i++){
@@ -1379,7 +1413,7 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 					predecesores[m]=predecesores[predecesores[m]];
 				}
 				//cin.get();
-				todos_adyacentes=todos_adyacentes && adyacentes.contiene(predecesores[m]);
+				todos_adyacentes=todos_adyacentes && adyacentes.contiene	(predecesores[m]);
 				//cout<<"LA PRODUCTORIA: "<<todos_adyacentes<<endl;
 			}
 		}	
@@ -1397,8 +1431,8 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 void Administrador::calcular_tablas(){
 	for(int i=0; i<cant_routers; i++){
 		Lista<Etiqueta> tabla = this->Dijkstra(i);
-		cout<<"||||||||||||||||||||||||||||||||||||||"<<endl;
-		tabla.imprimir();
+		//cout<<"||||||||||||||||||||||||||||||||||||||"<<endl;
+		//tabla.imprimir();
 		routers.elemento_pos(i).actualizar_tabla(tabla);
 	}
 }
@@ -1466,7 +1500,7 @@ void Administrador::leer_archivo(){
 			cout<<endl;
 			routers.elemento_pos(ptr_conexion->origen()).agregar_conexion_envio(ptr_conexion);//El router que corresponde al orígen de la conexión va a cargar paquetes.
 			routers.elemento_pos(ptr_conexion->destino()).agregar_conexion_recepcion(ptr_conexion);//El router que corresponde al destino de la conexión va a leer los paquetes cargados en el canal.
-			Arco nvo_arco(origen, destino, ancho_banda);
+			Arco nvo_arco(origen, destino, TAM_MAX_PAG/ancho_banda);//Como el peso es la distancia, dificultad o costo de la comunicacion entre nodos, entonces debe ser inversamente proporcional a los anchos de banda
 			arcos.agregar(nvo_arco);
 		}
 		break;
@@ -1516,7 +1550,7 @@ int Administrador::dibujar_grafo(){
 		/*set<int>::iterator it_1 = conexiones.elemento_pos(k).terminales().begin();
 		set<int>::iterator it_2 = it_1++;
 		flujo_salida<<*it_1<<" -- "<<*it_2<<" [color=blue,penwidth=3.0]"<<endl;*/
-		flujo_salida<<arcos.elemento_pos(k).origen()<<" -> "<<arcos.elemento_pos(k).destino()<<" [color=blue,penwidth=3.0]"<<endl;
+		flujo_salida<<arcos.elemento_pos(k).origen()<<" -> "<<arcos.elemento_pos(k).destino()<<" [label=\""<<arcos.elemento_pos(k).peso()<<"\",color=blue,penwidth=3.0]"<<endl;
 	}
 	flujo_salida<<"}"<<endl;
 	

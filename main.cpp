@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include "Administrador.h"
-#include "Administrador.cpp"
+using namespace std;
 int main(int argc, char **argv)
 {
 	Administrador admin;
@@ -16,10 +16,14 @@ int main(int argc, char **argv)
 	while (true) {
 		cin>>comando;
 		if(comando>0){
-			if(comando==1)
+			if(comando==1){
 				cout<<"Simulación de un paso"<<endl;
-			else
+				admin.simular_un_paso(true);
+			}
+			else{
 				cout<<"Simulación de "<<comando<<" pasos."<<endl;
+				admin.simular_cant_pasos(comando);
+			}
 		}
 		else{
 			cout<<"Simulación Terminada."<<endl;

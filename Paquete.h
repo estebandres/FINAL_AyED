@@ -1,8 +1,8 @@
 #ifndef PAQUETE_H
 #define PAQUETE_H
 #include <vector>
-
-using namespace std;
+using std::vector;
+//using namespace std;
 //definir el ancho del paquete
 
 class Paquete
@@ -27,7 +27,6 @@ class Paquete
 		void cambiar_orden(int);
 		
 };
-
 
 #endif // Paquete_H
 

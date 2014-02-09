@@ -14,14 +14,15 @@ int Biblioteca_paquetes::agregar_paquete(Paquete paq_recibido){
 	bool hay_cat_router=false;
 	bool hay_cat_pagina=false;
 	int i,j;
-	cout<<"-----------------------------------------------------"<<endl;
-	cout<<"TAMANIO: "<<clasificador.tamanio()<<endl;
 	int router_destino = paq_recibido.obtener_ip_comp_destino()[0];
+	/*cout<<"-----------------------------------------------------"<<endl;
+	cout<<"TAMANIO: "<<clasificador.tamanio()<<endl;
+	
 	cout<<"ROUTER DESTINO: "<<router_destino<<endl;;
 	cout<<"PAGINA DESTINO: "<<paq_recibido.obtener_id_pagina()<<endl;
-	cout<<"------------------------------------------------------"<<endl;
+	cout<<"------------------------------------------------------"<<endl;*/
 	if(clasificador.tamanio()>0){//Si el clasificador no está vacío.
-		cout<<"El clasificador no está vacío"<<endl;
+		//cout<<"El clasificador no está vacío"<<endl;
 		for(i=0 ; i<clasificador.tamanio() ; i++){
 			if(clasificador.elemento_pos(i).obtener_duenio()==router_destino){
 				hay_cat_router=true;
@@ -30,21 +31,21 @@ int Biblioteca_paquetes::agregar_paquete(Paquete paq_recibido){
 		}
 			if(hay_cat_router){//Si la categoría del clasificador en la posicion (i) tiene como dueño al router destino del paquete.
 //Si el clasificador tiene la categoría para el router_destino del paquete en la posicion (i).
-				cout<<"hay paginas para este router "<<router_destino<<endl;
+				//cout<<"hay paginas para este router "<<router_destino<<endl;
 				for(j=0 ; j < clasificador.elemento_pos(i).tamanio() ; j++){
 					if(clasificador.elemento_pos(i).elemento_pos(j).obtener_duenio()==paq_recibido.obtener_id_pagina()){
 						hay_cat_pagina=true;
 						break;
 					}
 				}
-					cout<<"REVISO PAGINA: "<<hay_cat_pagina;
+					//cout<<"REVISO PAGINA: "<<hay_cat_pagina;
 					if(hay_cat_pagina){//Si la categoría de páginas para tal router contiene una para la página del paquete.
 //Si el clasificador tiene la categoría para la página del paquete en la poscion (j) dentro de la categoría del router destino en la posición (i).
-						cout<<"hay paquetes para la pagina"<<paq_recibido.obtener_id_pagina()<<endl;
+						//cout<<"hay paquetes para la pagina"<<paq_recibido.obtener_id_pagina()<<endl;
 						clasificador.elemento_pos(i).elemento_pos(j).encolar(paq_recibido);
 						if(paq_recibido.obtener_ip_comp_destino()[0]==mi_router && paq_recibido.obtener_tamanio_pagina()==clasificador.elemento_pos(i).elemento_pos(j).tamanio()){//Si el paquete tiene como destino mi_router y además completa una página.
 							//Ordeno los paquetes en órden ascendente y Elimino la categoría de la página completada;
-							cout<<"Pagina completa"<<endl;
+							//cout<<"Pagina completa"<<endl;
 							vector<int> vec_des(clasificador.elemento_pos(i).elemento_pos(j).tamanio());
 							vector<int> vec_ord(vec_des.size());
 							int k=0;
@@ -65,7 +66,7 @@ int Biblioteca_paquetes::agregar_paquete(Paquete paq_recibido){
 										aux=vec_des[l];
 										vec_des[l]=vec_des[m];
 										vec_des[m]=aux;
-										clasificador.elemento_pos(i).elemento_pos(j).intercambiar_pos_nodos(l,m);
+										//clasificador.elemento_pos(i).elemento_pos(j).intercambiar_pos_nodos(l,m);
 									}
 								}
 							}
@@ -77,7 +78,7 @@ int Biblioteca_paquetes::agregar_paquete(Paquete paq_recibido){
 						}
 					}
 					else{//Si el clasificador NO tiene la categoría para la página del paquete. 
-						cout<<"agrega cat pag"<<endl;
+						//cout<<"agrega cat pag"<<endl;
 						Cola<Paquete> paquetes_nva_pag(paq_recibido.obtener_id_pagina());
 						paquetes_nva_pag.encolar(paq_recibido);
 						clasificador.elemento_pos(i).encolar(paquetes_nva_pag);
@@ -85,7 +86,7 @@ int Biblioteca_paquetes::agregar_paquete(Paquete paq_recibido){
 					}
 			}
 			else{//Si el clasificador NO tiene la categoría para el router destino del paquete.
-				cout<<"agrega cat router"<<endl;
+				//cout<<"agrega cat router"<<endl;
 				Cola<Cola<Paquete> > paginas_nvo_router(router_destino);
 				Cola<Paquete> paquetes_nva_pag(paq_recibido.obtener_id_pagina());
 				paquetes_nva_pag.encolar(paq_recibido);
@@ -95,7 +96,7 @@ int Biblioteca_paquetes::agregar_paquete(Paquete paq_recibido){
 			}
 	}
 	else{//Si el clasificador ESTÁ VACÍO.
-		cout<<"Estaba vacio"<<endl;
+		//cout<<"Estaba vacio"<<endl;
 		Cola<Cola<Paquete> > paginas_nvo_router(router_destino);
 		Cola<Paquete> paquetes_nva_pag(paq_recibido.obtener_id_pagina());
 		paquetes_nva_pag.encolar(paq_recibido);
@@ -109,10 +110,13 @@ int Biblioteca_paquetes::agregar_paquete(Paquete paq_recibido){
 
 Paquete Biblioteca_paquetes::obtener_paquete(){
 	assert (clasificador.tamanio()>0 && "Se intenta obtener paquetes de la coleccion vacia");
+	//cout<<"Hey1"<<endl;
 	if(clasificador.primer_elemento().obtener_duenio()==mi_router)//Si estoy en las paginas de mi router reencolo.
 		clasificador.reencolar();
+	//cout<<"Hey2"<<endl;
 	Paquete paquete_envio = clasificador.primer_elemento().primer_elemento().primer_elemento();
 	clasificador.primer_elemento().primer_elemento().desencolar();
+	//cout<<"Hey3"<<endl;
 	if(clasificador.primer_elemento().primer_elemento().es_vacia())//si la página no tiene más paquetes...
 		clasificador.primer_elemento().desencolar();//Desencolo la página para ese router.
 	else
@@ -134,7 +138,7 @@ void Biblioteca_paquetes::imprimir(){
 		}
 	}
 }
-int Biblioteca_paquetes::tamanio(){
+int Biblioteca_paquetes::tamanio(){	
 	int tam=0;
 	for(int i=0;i<clasificador.tamanio();i++){
 		for(int j=0;j<clasificador.elemento_pos(i).tamanio();j++){
@@ -145,3 +149,16 @@ int Biblioteca_paquetes::tamanio(){
 	}
 	return tam;
 }
+
+int Biblioteca_paquetes::destino_proa(){
+	return clasificador.primer_elemento().obtener_duenio();
+}
+
+void Biblioteca_paquetes::reencolar_destino(){
+	this->clasificador.reencolar();
+}
+
+int Biblioteca_paquetes::cant_destinos(){
+	return this->clasificador.tamanio();
+}
+

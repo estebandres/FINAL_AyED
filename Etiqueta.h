@@ -12,11 +12,11 @@ class Etiqueta
 {
 	private:
 		int router_destino;		
-		//int router_despacho;		
+		int router_despacho;		
 		int peso_trayecto;
-		Lista<int> camino;
+		//Lista<int> camino;
 	public:		
-		Etiqueta(int, int);
+		Etiqueta(int, int, int);
 		~Etiqueta();
 		int despacho();
 		int destino();
@@ -24,8 +24,9 @@ class Etiqueta
 		void mod_peso_trayecto(int);//modifica peso_trayecto
 		void mod_despacho(int);
 		void imprimir();
-		void agregar_nodo(int);
-		Lista<int> obtener_camino();
+		//void agregar_nodo(int);
+		//Lista<int> obtener_camino();
+		//void corregir(int);
 
 };
 

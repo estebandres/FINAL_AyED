@@ -1,5 +1,6 @@
 #include "Computadora.h"
 using namespace std;
+
 Computadora::Computadora(vector<int> ip) : ip(ip),paginas_recibidas(){}
 /*Computadora::Computadora():ip(),paginas_recibidas(){
 }*/
@@ -19,6 +20,6 @@ int Computadora::cant_pag_recibidas(){
 vector<int> Computadora::obtener_ip(){
 	return this->ip;
 }
-
-
-
+void Computadora::imprimir(){
+	cout<<"Computadora: ("<<this->ip[0]<<"|"<<this->ip[1]<<endl;
+}

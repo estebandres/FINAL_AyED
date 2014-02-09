@@ -16,6 +16,5 @@ void Arco::mod_peso(int nvo_peso){
 	this->peso_arco=nvo_peso;
 }
 void Arco::imprimir(){
-	cout<<"["<<this->nodo_destino<<"|"<<this->nodo_destino<<"|"<<this->peso_arco<<"]";
+	cout<<"["<<this->nodo_origen<<"|"<<this->nodo_destino<<"|"<<this->peso_arco<<"]";
 }
-

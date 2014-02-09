@@ -77,8 +77,21 @@ public:
 	void quitar_nodo_pos(int);
 	void intercambiar_pos_nodos(int, int);
 	bool contiene(T);
+	void copiar_contenido(Lista<T>);
 
 };
+
+template <typename T>
+void Lista<T>::copiar_contenido(const Lista<T> fuente){
+	this->inicio=NULL;
+	this->final=NULL;
+	this->cant_nodos=0;
+	Nodo* ptr_nodo_actual = fuente.inicio;
+    while (ptr_nodo_actual != NULL) {
+        this->insertar_al_final(ptr_nodo_actual->elemento);
+        ptr_nodo_actual = ptr_nodo_actual->siguiente;
+    }
+}
 
 /*!Begin Snippet:copyconstructor*/
 // Copy constructor
@@ -351,13 +364,16 @@ bool Lista<T>::contiene(T elemento){
 	Nodo* ptr_nodo_actual = inicio;
 
     while (ptr_nodo_actual != NULL) {
+		//cout<<"CONTIENE: "<<ptr_nodo_actual->elemento<<" == "<<elemento<<endl;
 		if(ptr_nodo_actual->elemento == elemento){
 			contenido=true;
+			//cout<<"CONTIENE_RES: "<<contenido<<endl;
 			return contenido;
 		}
 		ptr_nodo_actual = ptr_nodo_actual->siguiente;
 	}
+	//cout<<"CONTIENE_RES: "<<contenido<<endl;
 	return contenido;
 }
-/*!End Snippet:filebegin*/
+
 #endif

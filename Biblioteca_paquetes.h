@@ -24,6 +24,10 @@ class Biblioteca_paquetes
 		Paquete obtener_paquete();
 		void imprimir();
 		int tamanio();
+		int destino_proa();
+		int hay_envios();
+		void reencolar_destino();
+		int cant_destinos();
 };
 
 #endif // Paquete_H

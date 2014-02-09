@@ -1,8 +1,7 @@
-#include <iostream>
 #include "Paquete.h"
-#include <vector>
-
+#include <iostream>
 using namespace std;
+//using std::vector;
 
 Paquete::Paquete(){
 	this->ip_comp_origen=vector<int>(-1,-1);
@@ -41,7 +40,7 @@ int Paquete::obtener_tamanio_pagina(){
 
 void Paquete::imprimir(){
 	//cout<<"PAQUETE:"<<this->nro_orden<<" --> PÁGINA: "<<this->id_pagina<<endl;
-	cout<<"[PAG:"<<this->id_pagina<<",Ro:"<<this->ip_comp_origen[0]<<",Rd:"<<this->ip_comp_destino[0]<<",ORD:"<<this->nro_orden<<"]";
+	cout<<"[PAG:"<<this->id_pagina<<",Ro:"<<this->ip_comp_origen[0]<<",Rd:"<<this->ip_comp_destino[0]<<",ORD:"<<this->nro_orden<<"/"<<this->tamanio_pagina<<"]";
 }
 
 void Paquete::cambiar_orden(int nvo_nro_orden){

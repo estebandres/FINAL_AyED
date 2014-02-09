@@ -4,7 +4,6 @@
 #include "Pagina.h"
 #include <vector>
 
-using namespace std;
 /*
 Esta clase representa las computadoras o terminales conectadas a los routers
 en la red a simular. Incluye un puntero al router al que está conectada con el objetivo de
@@ -25,6 +24,7 @@ class Computadora
 		void recibir_pagina(Pagina);
 		int cant_pag_recibidas();
 		vector<int> obtener_ip();
+		void imprimir();
 };
 
 #endif // COMPUTADORA_H

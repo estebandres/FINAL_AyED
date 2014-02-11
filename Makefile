@@ -14,4 +14,4 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -rf $(EXECUTABLE) *.o *.gch
+	rm -rf $(EXECUTABLE) *.o *.gch *.dot *.png

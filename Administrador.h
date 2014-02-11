@@ -32,6 +32,7 @@ class Administrador
 		int cant_routers;
 		int total_pag;
 		int cant_pasos;
+		int pag_sel;
 		
 	public:
 		Administrador();

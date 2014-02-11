@@ -128,11 +128,11 @@ Paquete Biblioteca_paquetes::obtener_paquete(){
 	return paquete_envio;
 }
 
-void Biblioteca_paquetes::imprimir(){
+void Biblioteca_paquetes::imprimir(int id_pag){
 	for(int i=0;i<clasificador.tamanio();i++){
 		for(int j=0;j<clasificador.elemento_pos(i).tamanio();j++){
 			for(int k=0;k<clasificador.elemento_pos(i).elemento_pos(j).tamanio();k++){
-				clasificador.elemento_pos(i).elemento_pos(j).elemento_pos(k).imprimir();
+				clasificador.elemento_pos(i).elemento_pos(j).elemento_pos(k).imprimir(id_pag);
 				cout<<" ; ";
 			}
 		}

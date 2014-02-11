@@ -1,5 +1,7 @@
 #include "Paquete.h"
 #include <iostream>
+
+
 using namespace std;
 //using std::vector;
 
@@ -38,9 +40,12 @@ int Paquete::obtener_tamanio_pagina(){
 	return this->tamanio_pagina;
 }
 
-void Paquete::imprimir(){
+void Paquete::imprimir(int id_pag){
 	//cout<<"PAQUETE:"<<this->nro_orden<<" --> PÁGINA: "<<this->id_pagina<<endl;
-	cout<<"[PAG:"<<this->id_pagina<<",Ro:"<<this->ip_comp_origen[0]<<",Rd:"<<this->ip_comp_destino[0]<<",ORD:"<<this->nro_orden<<"/"<<this->tamanio_pagina<<"]";
+	if(this->id_pagina==id_pag)
+		cout<<BOLD_YELLOW<<"[PAG:"<<this->id_pagina<<",Ro:"<<this->ip_comp_origen[0]<<",Rd:"<<this->ip_comp_destino[0]<<",ORD:"<<this->nro_orden<<"/"<<this->tamanio_pagina<<"]"<<ANSI_COLOR_RESET;
+	else
+		cout<<"[PAG:"<<this->id_pagina<<",Ro:"<<this->ip_comp_origen[0]<<",Rd:"<<this->ip_comp_destino[0]<<",ORD:"<<this->nro_orden<<"/"<<this->tamanio_pagina<<"]";
 }
 
 void Paquete::cambiar_orden(int nvo_nro_orden){

@@ -22,7 +22,7 @@ class Biblioteca_paquetes
 		~Biblioteca_paquetes();
 		int agregar_paquete(Paquete);
 		Paquete obtener_paquete();
-		void imprimir();
+		void imprimir(int);
 		int tamanio();
 		int destino_proa();
 		int hay_envios();

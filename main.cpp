@@ -1,6 +1,8 @@
 #include <iostream>
 #include <sstream>
 #include "Administrador.h"
+
+
 using namespace std;
 int main(int argc, char **argv)
 {

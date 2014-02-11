@@ -15,7 +15,7 @@
 #define TAM_MIN_PAG 5
 
 Administrador::Administrador()
-	:routers(),arcos(),conexiones(),cant_comp_por_router(0),cant_routers(0),total_pag(0),cant_pasos(1){}
+	:routers(),arcos(),conexiones(),cant_comp_por_router(0),cant_routers(0),total_pag(0),cant_pasos(1),pag_sel(-1){}
 
 Administrador::~Administrador(){
 }
@@ -70,9 +70,12 @@ void Administrador::simular_un_paso(bool verbose){//recorrer la lista de routers
 			this->crear_pagina();//Se crearán tantas páginas como routers tiene el sistema.
 			bandera--;
 		}
+		cout<<"Elija una página de las creadas para seguir el trayecto de sus paquetes.\nIngrese el id de la página:"<<endl;
+		cin>>pag_sel;
+
 		cout<<endl<<BOLD_CYAN<<"-----------------------------------------------ESTADO INICIAL--------------------------------------------"<<ANSI_COLOR_RESET<<endl;
 		for(int i=0;i<routers.tamanio();i++){
-			routers.elemento_pos(i).mostrar_paquetes();
+			routers.elemento_pos(i).mostrar_paquetes(pag_sel);
 		}
 	}
 	if((cant_pasos % 5) == 0){//Cada 5 pasos de simulación se crea una página.
@@ -98,7 +101,7 @@ void Administrador::simular_un_paso(bool verbose){//recorrer la lista de routers
 	}
 	if(verbose){
 		for(int i=0;i<routers.tamanio();i++){
-			routers.elemento_pos(i).mostrar_paquetes();
+			routers.elemento_pos(i).mostrar_paquetes(pag_sel);
 		}
 	}
 	//cout<<"Tamanio de Routers"<<routers.tamanio()<<endl;
@@ -184,26 +187,36 @@ Lista<Etiqueta> Administrador::Dijkstra(int nodo_inicio){
 		}
 	}
 	
-	for(size_t i=0;i<predecesores.size();i++){
+	cout<<"PREDECESORES PARA R"<<nodo_inicio<<": ";
+	for(size_t i=0;i<predecesores.size();i++){//Se cumple necesariamente para todos los nodos.
+		cout<<"|"<<predecesores[i]<<"| ";
 		if(predecesores[i]==nodo_inicio)
-			predecesores[i]=i;
+			predecesores[i]=i;//Si algún destino (i) tiene como predecesor el nodo_inicio entonces debo ir directo al destino!!!!
 	}
-	
+	cout<<endl;
 	bool todos_adyacentes=false;
+	int predecesor=INF;
 	while(!todos_adyacentes){
 		todos_adyacentes=true;
 		for(size_t m=0;m<predecesores.size();m++){
-			if(predecesores[m]!=nodo_inicio){
-				if(!adyacentes.contiene(predecesores[m])){
+			if(m!=(size_t)nodo_inicio){
 					//cout<<"Entre al if. Parece que"<<predecesores[m]<<"No es adyacente."<<endl;
-					predecesores[m]=predecesores[predecesores[m]];
+				predecesor = predecesores[predecesores[m]];
+				if(predecesor!=nodo_inicio){
+					predecesores[m]=predecesor;
 				}
 				//cin.get();
-				todos_adyacentes=todos_adyacentes && adyacentes.contiene	(predecesores[m]);
+				todos_adyacentes=todos_adyacentes && adyacentes.contiene(predecesores[m]);
 				//cout<<"LA PRODUCTORIA: "<<todos_adyacentes<<endl;
 			}
-		}	
+		}
 	}
+
+	cout<<"PREDECESORES PARA R"<<nodo_inicio<<": ";
+	for(size_t i=0;i<predecesores.size();i++){
+		cout<<"|"<<predecesores[i]<<"| ";
+	}
+	cout<<endl;
 	
 	for(int n=0;n<etiquetas.tamanio();n++){
 		etiquetas.elemento_pos(n).mod_despacho(predecesores[n]);

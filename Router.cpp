@@ -42,6 +42,7 @@ void Router::leer_conexiones(){
 
 Pagina Router::construir_pagina(Paquete paq_leido){
 	Pagina pag(paq_leido.obtener_id_pagina(), paq_leido.obtener_tamanio_pagina(), paq_leido.obtener_ip_comp_origen(), paq_leido.obtener_ip_comp_destino());
+	cout<<"PÁGUINA ID: "<<paq_leido.obtener_id_pagina()<<" CONSTRUIDA EN R"<<this->ip<<endl;
 	return pag;
 }//Devuelve una página con la informaxión del paquete paq_leido.
 
@@ -103,12 +104,12 @@ int Router::buscar_en_tabla(int destino){
 	assert(0 && "Router::buscar_en_tabla -> \"No se encontró la etiqueta para el destino del paquete.\"");
 }
 
-void Router::mostrar_paquetes(){
+void Router::mostrar_paquetes(int id_pag){
 	cout<<endl<<BOLD_GREEN "-----------------------------------------------------------------------------" ANSI_COLOR_RESET<<endl;
 	cout << BOLD_RED "R"<<this->ip<<":"<< BOLD_BLUE "TOTAL DE PAQUETES: "<<this->organizador_paquetes.tamanio()<<ANSI_COLOR_RESET<<endl;
 	//cout<<"R"<<this->ip<<":"<<endl;
 	cout<<BOLD_GREEN "-----------------------------------------------------------------------------" ANSI_COLOR_RESET<<endl;
-	this->organizador_paquetes.imprimir();
+	this->organizador_paquetes.imprimir(id_pag);
 }
 
 void Router::agregar_conexion_envio(Conexion* con){

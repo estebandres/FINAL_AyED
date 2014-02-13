@@ -106,7 +106,7 @@ int Router::buscar_en_tabla(int destino){
 
 void Router::mostrar_paquetes(int id_pag){
 	cout<<endl<<BOLD_GREEN "-----------------------------------------------------------------------------" ANSI_COLOR_RESET<<endl;
-	cout << BOLD_RED "R"<<this->ip<<":"<< BOLD_BLUE "TOTAL DE PAQUETES: "<<this->organizador_paquetes.tamanio()<<ANSI_COLOR_RESET<<endl;
+	cout << BOLD_MAGENTA << ANSI_COLOR_BRIGHT << "R"<<this->ip<<":"<< BOLD_BLUE << ANSI_COLOR_BRIGHT << "TOTAL DE PAQUETES: "<<this->organizador_paquetes.tamanio()<<ANSI_COLOR_RESET<<endl;
 	//cout<<"R"<<this->ip<<":"<<endl;
 	cout<<BOLD_GREEN "-----------------------------------------------------------------------------" ANSI_COLOR_RESET<<endl;
 	this->organizador_paquetes.imprimir(id_pag);

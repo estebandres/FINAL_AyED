@@ -6,6 +6,7 @@
 #define BOLD_GREEN   "\x1b[32;1m"
 #define BOLD_CYAN    "\x1b[36;1m"
 #define BOLD_YELLOW  "\x1b[33;1m"
+#define BOLD_MAGENTA "\x1b[35;1m"
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
 #define ANSI_COLOR_YELLOW  "\x1b[33m"

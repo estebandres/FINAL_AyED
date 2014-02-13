@@ -91,6 +91,7 @@ void Administrador::simular_un_paso(bool verbose){//recorrer la lista de routers
 				arcos.elemento_pos(i).mod_peso(nvo_peso);
 				
 		}
+		this->arcos.imprimir();
 		this->calcular_tablas();
 	}
 	//cout<<"Tamanio de Routers"<<routers.tamanio()<<endl;

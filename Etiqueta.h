@@ -5,8 +5,7 @@
 
 using namespace std;
 /*
-Esta clase implementa las cumplas de tres enteros que utilizará la clase router para
-determinar hacia dónde debe enviar los paquetes.
+Esta clase implementa las triplas de tres enteros que utilizará la clase router para determinar hacia dónde debe enviar los paquetes.
 */
 class Etiqueta
 {

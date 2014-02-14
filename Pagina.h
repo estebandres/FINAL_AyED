@@ -3,9 +3,7 @@
 #include <vector>
 #include <iostream>
 /*
-Esta clase representa las páginas que generan las computadoras
-y que contiene una identificación su tamaño en cantidad de paquetes y las direcciones
-de origen y de destino en duplas.
+Esta clase representa las páginas que generan las computadoras y que contiene una identificación su tamaño en cantidad de paquetes y las direcciones de origen y de destino en forma de duplas de enteros.
 */
 
 using namespace std;

@@ -17,7 +17,9 @@
 #define ANSI_COLOR_RESET   "\x1b[0m"
 using std::vector;
 //using namespace std;
-//definir el ancho del paquete
+/*
+Esta clase representa las que componen una página y que contiene un número de órden, el tamanio de la página a la que pertenece y las direcciones de origen y de destino en forma de duplas de enteros.
+*/
 
 class Paquete
 {

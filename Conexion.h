@@ -7,9 +7,7 @@
 
 using namespace std;
 /*
-Esta clase representa el arco de el grafo que ilustra la red a simular.
-Consta de un par de terminales, la especificación del ancho de banda y
-una cola para emular las limitaciones del canal. 
+Esta clase representa la vía que comunica dos routers en la red y hace referencia al arco del grafo de la red a simular. Consta de dos nros de ip, el origen y destino así como la especificación del ancho de banda y una cola para emular las limitaciones del canal. 
 */
 class Conexion : public Arco
 {

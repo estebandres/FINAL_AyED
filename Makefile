@@ -6,8 +6,8 @@ OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=final_AyED
 
 all: $(SOURCES) $(EXECUTABLE)
-	
-$(EXECUTABLE): $(OBJECTS) 
+
+$(EXECUTABLE): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
 .cpp.o:
@@ -15,3 +15,6 @@ $(EXECUTABLE): $(OBJECTS)
 
 clean:
 	rm -rf $(EXECUTABLE) *.o *.gch *.dot *.png
+
+fullclean:
+	rm -rf $(EXECUTABLE) *.o *.gch *.dot *.png *~

@@ -30,13 +30,13 @@
 
         <section id="downloads" class="clearfix">
           <a href="https://github.com/Andresteve07/FINAL_AyED/zipball/master" id="download-zip" class="button">
-              <span>Download .zip</span>
+              <span>Descarga en .zip</span>
             </a>
           <a href="https://github.com/Andresteve07/FINAL_AyED/tarball/master" id="download-tar-gz" class="button">
-            <span>Download .tar.gz</span>
+            <span>Descarga en .tar.gz</span>
           </a>
           <a href="https://github.com/Andresteve07/FINAL_AyED" id="view-on-github" class="button">
-            <span>View on GitHub</span>
+            <span>Repositorio en GitHub</span>
           </a>
         </section>
 
@@ -47,57 +47,99 @@
             <a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages">
               <span class="octicon octicon-link"></span>
             </a>
-            Welcome to GitHub Pages.
+            Introducción
           </h3>
 
 <p>
-  This automatic page generator is the easiest way to create beautiful pages
-  for all of your projects. Author your page content here using GitHub Flavored
-  Markdown, select a template crafted by a designer, and publish. After your
-  page is generated, you can check out the new branch:
+  El desarrollo tiene una primera fase donde se interpreta la consigna, para conocer el sistema (red de routers) a simular. Se realizo una descripción e implementación con orientación a objeto, permitiendo modularidad y hacer uso de herencia entre las clases Arco – Conexión.
+Para ello, fueron necesarios los conocimientos brindados en clase de las estructuras implementadas como Nodo, Lista, Cola, Colas Anidadas, Grafo.
+Una vez proyectado el sistema, en la segunda fase codificamos y adaptamos el Algoritmo de Dijkstra al sistema, dado que el resultado devuelto por el algoritmo, no es un valor de uso directo.
+Por consigna, sabemos que los routers no son dispositivos autodidactas, es por ello, que existe un  ’Administrador’ que  cumple la función de gestionar, entre otras cosas,  la ejecución del algoritmo al inicio y cada 30 ciclos, que restablece los valores de las tablas de redireccionamiento de paquetes de cada Router perteneciente a la red. Es por ello, que a  partir del cálculo hecho por  el algoritmo, paralelamente se trazan las trayectorias más eficientes, es decir, la  secuencia de routers más eficiente.
+La tercera fase, para verificar el modelo, realizamos 3 casos de uso, corroborando los valores arrojados por el algoritmo, y las tablas calculadas para cada router.
 </p>
 
-<pre><code>
-  $ cd your_repo_root/repo_name
-  $ git fetch origin
-  $ git checkout gh-pages
-</code></pre>
-
-<p>
-  If you're using the GitHub for Mac, simply sync your repository and you'll
-  see the new branch.
-</p>
 
 <h3>
   <a name="designer-templates" class="anchor" href="#designer-templates">
     <span class="octicon octicon-link"></span>
   </a>
-  Designer Templates
+  Algoritmo de Dijkstra
 </h3>
 
 <p>
-  We've crafted some handsome templates for you to use. Go ahead and continue
-  to layouts to browse through them. You can easily go back to edit your page
-  before publishing. After publishing your page, you can revisit the page
-  generator and switch to another theme. Your Page content will be preserved
-  if it remained markdown format.
+  El algoritmo de Dijkstra resuelve el problema de los caminos más cortos y
+  orígen único en un  grafo dirigido y ponderado $G=(V,E)$ tal que todos los
+  pesos de los arcos son no negativos. Con una buena implementación el timepo
+  de ejecución del algoritmo de Dijkstra es menor al de Bellman-Ford.
 </p>
 
-<h3>
-  <a name="rather-drive-stick" class="anchor" href="#rather-drive-stick">
+<h2>
+  <a name="designer-templates" class="anchor" href="#designer-templates">
     <span class="octicon octicon-link"></span>
   </a>
-  Rather Drive Stick?
-</h3>
+  ¿Para qué sirve el algoritmo?
+</h2>
 
 <p>
-  If you prefer to not use the automatic generator, push a branch named
-  <code>gh-pages</code> to your repository to create a page manually.
-  In addition to supporting regular HTML content, GitHub Pages support Jekyll,
-  a simple, blog aware static site generator written by our own
-  Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and
-  footers without having to copy them across every page. It also offers
-  intelligent blog support and other advanced templating features.
+La función del algoritmo es calcular los caminos mínimos que hay entre el nodo origen y todos los nodos del grafo.
+</p>
+
+<h2>
+  <a name="designer-templates" class="anchor" href="#designer-templates">
+    <span class="octicon octicon-link"></span>
+  </a>
+  ¿Cuál es  la lógica del algoritmo?
+</h2>
+
+<<p>
+El algoritmo parte de un nodo inicial, y se va desplazando a través de  la red, guiándose por los nodos adyacentes al nodo actual.
+Conforme el algoritmo evoluciona se encuentran mejores caminos para determinado nodo destino por lo que se actualiza el resultado. Finalmente el algoritmo termina cuando no quedan nodos sin camino mínimo encontrado.
+Dijkstra mantiene un conjunto $S$ de nodos para los que ya se calcularon los caminos mínimos. El algoritmo cíclicamente selecciona un nodo $u \in (V-S)$ cuya distancia es la mínima entre los que quedan sin procesar, agrega el nodo seleccionado $u$ a $S$ y \textsc{ Relaja} todos los vértices adyacentes a $u$.
+</p>
+
+<pre><code>
+  \begin{leftbar}
+  \textsc{Dijkstra}(G, nodo\_inicio)\\
+  1\indent	\textsc{Inicializar}(G)\\
+  2\indent	$S=\emptyset$\\
+  3\indent	$Q=G.V$\\
+  4\indent	\textbf{while} ($Q\neq\emptyset$)\\
+  5\indent\indent		nodo\_sel=\textsc{Mas Cercano}(Q)\\
+  6\indent\indent		$S=S\cup nodo\_sel$\\
+  7\indent\indent		\textbf{for each} $nodo\_i \in G.Adyacentes[nodo\_sel]$\\
+  8\indent\indent\indent			\textsc{Relajar}(u,v)
+  \end{leftbar}
+</code></pre>
+
+<p>
+¿Como fue implementada dicha lógica?
+Los elementos  que utilizamos son:
+</p>
+
+<ul>
+    <li>Conjunto Q: conjunto de nodos no chequeados</li>
+    <li>Conjunto S: conjunto de nodos chequeados</li>
+    <li>Conjunto Adyacentes: conjunto de nodos adyacentes al nodo inicio</li>
+    <li>Vector Predecesores: guarda los valores de los router predecesores a cada router</li>
+    <li>Vector Distancias: almacena las distancias de los caminos mas cortos a cada router</li>
+    <li>
+      Lista de Etiquetas: contiene las etiquetas correspondiente a cada uno de los routers, con los valores en el siguiente formato:
+      [r_destino, r_siguiente, peso del trayecto]
+    </li>
+</ul>
+
+<p>
+Primeramente, cargamos en conjunto Q , Adyacentes, las etiquetas, haciendo distinción para la etiqueta del nodo inicio \verb+{ orden_nodo_inicio, 0,0 }+ y las demás \verb+{ orden_nodo_x, -1, INF }+.
+Luego recorremos en conjunto Q buscando en las etiquetas de cada uno de los routers, la que contenga el menor trayecto. Con esta condición, seleccionamos el nodo actual o elegido, y lo pasamos al conjunto S.
+Luego recorremos los arcos, buscando aquellos que tengan origen en el nodo actual, y que su destino no corresponda a un nodo contenido en S.
+Es entonces, cuando realizamos la comparación de distancias (trayectos almacenados en las etiquetas), con la distancia resultante de la suma de la distancia del trayecto desde el nodo inicio, al nodo actual, las la del trayecto del nodo actual al siguiente para determinar si actualizar o no los valores tanto en el peso de trayectoria, perteneciente a la etiqueta del router siguiente,  como en el Vector Distancias y Predecesores.
+
+Seguidamente, normalizo y actualizo los valores en el Vector Predecesor, con los correspondientes valores de nodos adyacentes al nodo inicio, lo que nos permite posteriormente, armar las tablas para dicho router.
+Finalmente, Se actualiza el campo \verb+r_siguiente+ de la etiqueta con el valor correspondiente,  calculado en dicho Vector de Predecesores. Terminando así la ejecución del algoritmo, devolviendo la tabla con los nuevos valores de redireccionamiento.
+
+¿Qué diferencia tiene con Floyd-Warshall? Ambos algoritmos tienen la misma finalidad, obtener el calculo del camino mas corto. Pero la diferencia es que Dijkstra calcula los caminos partiendo desde un único nodo base, hasta los demás del grafo, mientras Floyd aplica lo mismo, pero para todos los nodos de la red.
+Es decir, si el costo de calculo de Dijkstra es $n \times n$  operaciones, el costo de FFloyd-Warshall será $n \times n \times n$
+
 </p>
 
 <h3>
